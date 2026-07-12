@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Application Config (개인 DB 정보 포함, 커밋 금지) ###
+src/main/resources/application.yml
+
