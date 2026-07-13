@@ -1,8 +1,10 @@
 package org.example.commercebackoffice.admin.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.commercebackoffice.admin.domain.Admin;
+import org.example.commercebackoffice.admin.controller.auth.SessionUser;
+import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.SignupRequest;
+import org.example.commercebackoffice.admin.domain.Admin;
 import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
 import org.example.commercebackoffice.admin.repository.AdminRepository;
 import org.example.commercebackoffice.config.PasswordEncoder;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 //중복체크 -> 암호화 ->저장
+
 @Service
 @RequiredArgsConstructor
 public class AdminService {
@@ -47,5 +50,14 @@ public class AdminService {
         adminRepository.save(admin);
     }
 
+    @Transactional(readOnly = true)
+    public SessionUser login(LoginRequest loginRequest) {
+        Admin found = adminRepository.findByEmail(loginRequest.email())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
+        if(!found.verifyPassword(loginRequest.password(), passwordEncoder))
+            throw new RuntimeException("비밀번호 불일치");
+
+        return AdminMapper.toSessionUser(found);
+    }
 }

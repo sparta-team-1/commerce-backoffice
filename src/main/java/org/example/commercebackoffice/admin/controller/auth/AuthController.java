@@ -1,7 +1,9 @@
 package org.example.commercebackoffice.admin.controller.auth;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.SignupRequest;
 import org.example.commercebackoffice.admin.service.AdminService;
 import org.springframework.http.ResponseEntity;
@@ -23,4 +25,15 @@ public class AuthController {
         return  ResponseEntity.ok("회원가입 신청이 완료되었습니다. 승인을 기다려주세요");
     }
 
+    private final static int SESSION_EXPIRATION = 3600;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpSession session) {
+        SessionUser sessionUser = adminService.login(loginRequest);
+
+        session.setAttribute("userInfo", sessionUser);
+        session.setMaxInactiveInterval(SESSION_EXPIRATION);
+
+        return ResponseEntity.ok().build();
+    }
 }

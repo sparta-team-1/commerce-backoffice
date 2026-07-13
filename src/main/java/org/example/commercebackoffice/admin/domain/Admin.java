@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.commercebackoffice.admin.domain.enums.AdminRole;
 import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
+import org.example.commercebackoffice.config.PasswordEncoder;
 import org.example.commercebackoffice.common.entity.BaseEntity;
 
 import java.time.LocalDateTime;
@@ -43,14 +44,17 @@ public class Admin extends BaseEntity {
     private LocalDateTime rejectedAt;
     private String rejectionReason;
 
-
     @Builder
-    public Admin (String name, String email, String password, String phoneNumber,AdminRole role, AdminStatus status){
+    public Admin(String email, String name, String password, String phoneNumber, AdminRole role, AdminStatus status) {
+        this.email = email;
         this.name = name;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
         this.status = status;
+    }
 
+    public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(password, this.password);
     }
 }
