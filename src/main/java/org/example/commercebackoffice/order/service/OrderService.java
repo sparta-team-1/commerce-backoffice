@@ -39,7 +39,6 @@ public class OrderService {
 
         int quantity = requestDto.getQuantity();
 
-        // TODO: 주석 해제하여 재고 검증 및 차감 로직 연동
         // item.validateOrderable(quantity);
         // item.decreaseStock(quantity);
 
