@@ -1,12 +1,12 @@
 package org.example.commercebackoffice.customer.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.customer.dto.PatchCustomerRequest;
+import org.example.commercebackoffice.customer.dto.PatchCustomerResponse;
 import org.example.commercebackoffice.customer.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,15 +15,26 @@ public class CustomerController {
     private final CustomerService customerService;
 
     // 고객 리스트 조회
+    @GetMapping("/customers")
 
 
     // 고객 상세 조회
+    @GetMapping("/customers/{customerId}")
 
 
     // 고객 정보 수정
+    @PutMapping("/customers/{customerId}")
 
 
     // 고객 상태 변경
+    @PatchMapping("/customers/{customerId}")
+    public ResponseEntity<PatchCustomerResponse> updateStatus(
+            @PathVariable Long customerId,
+            @RequestBody PatchCustomerRequest patchCustomerRequest
+    ) {
+        PatchCustomerResponse result = customerService.updateStatus(customerId, patchCustomerRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
 
     // 고객 삭제
