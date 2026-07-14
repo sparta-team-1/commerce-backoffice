@@ -1,14 +1,13 @@
 package org.example.commercebackoffice.admin.controller.admin;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeRoleRequest;
-import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeStatusRequest;
-import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
-import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.*;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminPageResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
+import org.example.commercebackoffice.admin.service.AdminSearchCondition;
 import org.example.commercebackoffice.admin.service.AdminService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admins")
+@RequestMapping("/admins")
 public class AdminController {
     private final AdminService adminService;
 
@@ -117,6 +117,22 @@ public class AdminController {
         //세션에서 가져온 정보에서 id 추출
         Long curAdminId = userInfo.id();
         AdminResponse resBody = adminService.changeCurrentAdminPassword(curAdminId, changeRequest);
+
+        return ResponseEntity.ok(resBody);
+    }
+
+    //동적 쿼리 조회 엔드포인트
+    @GetMapping
+    public ResponseEntity<?> getAdminsWithCondition(@Nullable @RequestParam String role,
+                                                    @Nullable @RequestParam String status,
+                                                    @Nullable @RequestParam String search,
+                                                    @RequestParam Integer page,
+                                                    @RequestParam Integer limit,
+                                                    @RequestParam String sortBy,
+                                                    @RequestParam String sortOrder) {
+        AdminSearchCondition searchCondition = new AdminSearchCondition(page, limit, sortBy, sortOrder, status, role, search);
+
+        AdminPageResponse resBody = adminService.getAdminsWithCondition(searchCondition);
 
         return ResponseEntity.ok(resBody);
     }
