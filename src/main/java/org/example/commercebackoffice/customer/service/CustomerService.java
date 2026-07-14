@@ -1,6 +1,8 @@
 package org.example.commercebackoffice.customer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.customer.dto.PutCustomerRequest;
+import org.example.commercebackoffice.customer.dto.PutCustomerResponse;
 import org.example.commercebackoffice.customer.entity.CustomerEntity;
 import org.example.commercebackoffice.customer.dto.PatchCustomerRequest;
 import org.example.commercebackoffice.customer.dto.PatchCustomerResponse;
@@ -23,6 +25,23 @@ public class CustomerService {
 
 
     // 고객 정보 수정
+    @Transactional
+    public PutCustomerResponse updateCustomer(Long customerId, PutCustomerRequest request) {
+        CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new IllegalStateException("존재하지 않는 고객입니다.")
+        );
+        customer.updateCustomer(
+                request.getName(),
+                request.getEmail(),
+                request.getPhone()
+        );
+        return new PutCustomerResponse(
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getPhone()
+        );
+    }
 
 
 

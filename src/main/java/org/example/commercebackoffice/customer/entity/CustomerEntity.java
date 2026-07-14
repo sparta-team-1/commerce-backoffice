@@ -25,7 +25,7 @@ public class CustomerEntity {
     private String email;
 
     @Column(length = 20)
-    private String phoneNumber;
+    private String phone;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,17 +34,18 @@ public class CustomerEntity {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    public CustomerEntity(String name, String email, String phoneNumber) {
+    public CustomerEntity(String name, String email, String phone) {
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
+        this.phone = phone;
         this.status = CustomerStatus.ACTIVE;
         this.createdAt = LocalDateTime.now();
     }
 
-    public void updateInfo(String name, String phoneNumber) {
+    public void updateCustomer(String name, String email, String phone) {
         this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.phone = phone;
     }
 
     public void updateStatus(CustomerStatus status) {
