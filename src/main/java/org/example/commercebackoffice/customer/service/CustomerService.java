@@ -1,11 +1,8 @@
 package org.example.commercebackoffice.customer.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.commercebackoffice.customer.dto.PutCustomerRequest;
-import org.example.commercebackoffice.customer.dto.PutCustomerResponse;
+import org.example.commercebackoffice.customer.dto.*;
 import org.example.commercebackoffice.customer.entity.CustomerEntity;
-import org.example.commercebackoffice.customer.dto.PatchCustomerRequest;
-import org.example.commercebackoffice.customer.dto.PatchCustomerResponse;
 import org.example.commercebackoffice.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +18,20 @@ public class CustomerService {
 
 
     // 고객 상세 조회
+    @Transactional
+    public GetCustomerDetailResponse getOne(Long customerId) {
+        CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new IllegalStateException("존재하지 않는 고객입니다.")
+        );
+        return new GetCustomerDetailResponse(
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getPhone(),
+                customer.getStatus(),
+                customer.getCreatedAt()
+        );
+    }
 
 
 

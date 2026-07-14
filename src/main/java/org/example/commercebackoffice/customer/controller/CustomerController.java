@@ -1,10 +1,7 @@
 package org.example.commercebackoffice.customer.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.commercebackoffice.customer.dto.PatchCustomerRequest;
-import org.example.commercebackoffice.customer.dto.PatchCustomerResponse;
-import org.example.commercebackoffice.customer.dto.PutCustomerRequest;
-import org.example.commercebackoffice.customer.dto.PutCustomerResponse;
+import org.example.commercebackoffice.customer.dto.*;
 import org.example.commercebackoffice.customer.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +15,15 @@ public class CustomerController {
 
     // 고객 리스트 조회
     @GetMapping("/customers")
+    public
 
 
     // 고객 상세 조회
     @GetMapping("/customers/{customerId}")
+    public ResponseEntity<GetCustomerDetailResponse> getOne(@PathVariable Long customerId) {
+        GetCustomerDetailResponse result = customerService.getOne(customerId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
 
     // 고객 정보 수정
