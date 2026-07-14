@@ -21,7 +21,6 @@ public class Item extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
     private Admin admin;
-
     private String name;
     private String category;
     private Long price;
@@ -55,6 +54,11 @@ public class Item extends BaseEntity {
         this.price = price;
         this.stock = stock;
         this.status = status;
+    }
+
+    // Item 삭제 기능 비즈니스 로직 (Soft Delete)
+    public void discontinue() {
+        this.status = ItemStatus.DISCONTINUED;
     }
 
 }

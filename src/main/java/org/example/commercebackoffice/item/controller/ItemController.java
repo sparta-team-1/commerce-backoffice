@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/items")
 @RequiredArgsConstructor
+
 public class ItemController {
 
     private final ItemService itemService;
@@ -50,4 +51,11 @@ public class ItemController {
         return ResponseEntity.ok(responseDto);
     }
 
+    // 상품 삭제 API 추가
+    @DeleteMapping("/{itemId}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) {
+        itemService.deleteItem(itemId);
+        return ResponseEntity.noContent().build();
+    }
 }
+
