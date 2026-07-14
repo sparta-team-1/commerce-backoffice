@@ -1,14 +1,16 @@
 package org.example.commercebackoffice.customer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
 import org.example.commercebackoffice.customer.dto.*;
 import org.example.commercebackoffice.customer.entity.CustomerEntity;
 import org.example.commercebackoffice.customer.repository.CustomerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -18,23 +20,50 @@ public class CustomerService {
 
     // 고객 리스트 조회
     @Transactional(readOnly = true)
-    public List<GetCustomerListResponse> getALL() {
-        List<CustomerEntity> customers = customerRepository.findAll();
-        List<GetCustomerListResponse> dtos = new ArrayList<>();
+    public Page<GetCustomerListResponse> getCustomers(
+            String keyword,
+            CustomerStatus status,
+            Pageable pageable
+    ) {
+        Page<CustomerEntity> customers;
 
-        for (CustomerEntity customer : customers) {
-            GetCustomerListResponse dto = new GetCustomerListResponse(
-                    customer.getId(),
-                    customer.getName(),
-                    customer.getEmail(),
-                    customer.getPhone(),
-                    customer.getStatus(),
-                    customer.getCreatedAt()
+        boolean hasKeyword = keyword != null && !keyword.isBlank();
+        boolean hasStatus = status != null;
+
+        if (hasKeyword && hasStatus) {
+            customers = customerRepository.findByNameContainingAndStatusOrEmailContainingAndStatus(
+                    keyword,
+                    status,
+                    keyword,
+                    status,
+                    pageable
             );
-            dtos.add(dto);
+
+        } else if (hasKeyword) {
+            customers = customerRepository.findByNameContainingOrEmailContaining(
+                    keyword,
+                    keyword,
+                    pageable);
+
+        } else if (hasStatus) {
+            customers = customerRepository.findByStatus(status, pageable);
+
+        } else {
+            customers = customerRepository.findAll(pageable);
         }
-        return dtos;
-    }
+
+        return customers.map(customer -> new GetCustomerListResponse(
+                customer.getId(),
+                customer.getName(),
+                customer.getEmail(),
+                customer.getPhone(),
+                customer.getStatus(),
+                customer.getCreatedAt()
+                )
+            );
+
+        }
+
 
 
 
