@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
@@ -15,7 +17,10 @@ public class CustomerController {
 
     // 고객 리스트 조회
     @GetMapping("/customers")
-    public
+    public ResponseEntity<List<GetCustomerListResponse>> getAll() {
+        List<GetCustomerListResponse> result = customerService.getALL();
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
 
     // 고객 상세 조회

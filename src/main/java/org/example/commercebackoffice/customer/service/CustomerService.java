@@ -7,6 +7,9 @@ import org.example.commercebackoffice.customer.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
@@ -14,11 +17,30 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
 
     // 고객 리스트 조회
+    @Transactional(readOnly = true)
+    public List<GetCustomerListResponse> getALL() {
+        List<CustomerEntity> customers = customerRepository.findAll();
+        List<GetCustomerListResponse> dtos = new ArrayList<>();
+
+        for (CustomerEntity customer : customers) {
+            GetCustomerListResponse dto = new GetCustomerListResponse(
+                    customer.getId(),
+                    customer.getName(),
+                    customer.getEmail(),
+                    customer.getPhone(),
+                    customer.getStatus(),
+                    customer.getCreatedAt()
+            );
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
 
 
 
     // 고객 상세 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public GetCustomerDetailResponse getOne(Long customerId) {
         CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new IllegalStateException("존재하지 않는 고객입니다.")
