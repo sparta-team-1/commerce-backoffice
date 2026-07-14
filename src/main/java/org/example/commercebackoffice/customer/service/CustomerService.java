@@ -66,13 +66,11 @@ public class CustomerService {
 
 
 
-
-
     // 고객 상세 조회
     @Transactional(readOnly = true)
     public GetCustomerDetailResponse getOne(Long customerId) {
         CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 고객입니다.")
+                () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
         return new GetCustomerDetailResponse(
                 customer.getId(),
@@ -90,7 +88,7 @@ public class CustomerService {
     @Transactional
     public PutCustomerResponse updateCustomer(Long customerId, PutCustomerRequest request) {
         CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 고객입니다.")
+                () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
         customer.updateCustomer(
                 request.getName(),
@@ -111,7 +109,7 @@ public class CustomerService {
     @Transactional
     public PatchCustomerResponse updateStatus(Long customerId, PatchCustomerRequest request) {
         CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
-                () -> new IllegalStateException("존재하지 않는 고객입니다.")
+                () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
         customer.updateStatus(
                 request.getStatus()
@@ -128,7 +126,7 @@ public class CustomerService {
     public void delete(Long customerId) {
         boolean existence = customerRepository.existsById(customerId);
         if (!existence) {
-            throw new IllegalStateException("존재하지 않는 고객입니다.");
+            throw new CustomException(ErrorCode.CUSTOMER_NOT_FOUND);
         }
         customerRepository.deleteById(customerId);
     }
