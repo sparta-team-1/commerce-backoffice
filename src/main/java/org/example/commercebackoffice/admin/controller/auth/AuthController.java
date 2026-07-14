@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.SignupRequest;
 import org.example.commercebackoffice.admin.service.AdminService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,5 +38,25 @@ public class AuthController {
         session.setMaxInactiveInterval(SESSION_EXPIRATION);
 
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl("no-cache, no-store, must-revalidate");
+        headers.setPragma("no-cache");
+        headers.setExpires(0);
+
+        ResponseCookie cookie = ResponseCookie.from("JSESSIONID", "")
+                .path("/")
+                .maxAge(0)
+                .secure(true)
+                .httpOnly(true)
+                .build();
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 }
