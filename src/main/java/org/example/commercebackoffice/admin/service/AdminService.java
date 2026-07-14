@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangePasswordRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminPageResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
@@ -15,6 +16,9 @@ import org.example.commercebackoffice.admin.repository.AdminRepository;
 import org.example.commercebackoffice.common.exception.CustomException;
 import org.example.commercebackoffice.common.exception.ErrorCode;
 import org.example.commercebackoffice.config.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -194,6 +198,15 @@ public class AdminService {
         Admin saved = adminRepository.save(found);
 
         return AdminMapper.toAdminResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminPageResponse getAdminsWithCondition(AdminSearchCondition searchCondition) {
+        Pageable pageable = PageRequest.of(searchCondition.page(), searchCondition.limit());
+
+        Page<AdminResponse> result = adminRepositoryCustom.searchWithConditions(searchCondition, pageable);
+
+        return AdminPageResponse.from(result);
     }
 
     //id로 관리자 계정을 찾음
