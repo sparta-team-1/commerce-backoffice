@@ -88,10 +88,23 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
+    //현재 사용자 계정 정보 조회 엔드포인트
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@SessionAttribute SessionUser userInfo) {
+        //세션에서 가져온 정보에서 id 추출
         Long curAdminId = userInfo.id();
         AdminResponse resBody = adminService.me(curAdminId);
+
+        return ResponseEntity.ok(resBody);
+    }
+
+    //현재 사용자 계정 정보 수정 엔드포인트
+    @PatchMapping("/me")
+    public ResponseEntity<?> editCurrentUser(@SessionAttribute SessionUser userInfo,
+                                             @Valid @RequestBody AdminEditRequest editRequest) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        AdminResponse resBody = adminService.editCurrentAdminInfo(curAdminId, editRequest);
 
         return ResponseEntity.ok(resBody);
     }

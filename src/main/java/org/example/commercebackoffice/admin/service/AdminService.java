@@ -180,6 +180,24 @@ public class AdminService {
         adminRepository.save(found);
     }
 
+    @Transactional
+    public AdminResponse editCurrentAdminInfo(Long curAdminId, AdminEditRequest editRequest) {
+        Admin found = findById(curAdminId);
+
+        if(editRequest.name() != null) {
+            found.changeName(editRequest.name());
+        }
+        if(editRequest.email() != null) {
+            found.changeEmail(editRequest.email());
+        }
+        if(editRequest.phone() != null) {
+            found.changePhone(editRequest.phone());
+        }
+
+        Admin saved = adminRepository.save(found);
+        return AdminMapper.toAdminResponse(saved);
+    }
+
     //id로 관리자 계정을 찾음
     private Admin findById(Long id) {
         return adminRepository.findById(id)
