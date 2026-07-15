@@ -3,9 +3,9 @@ package org.example.commercebackoffice.customer.service;
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.common.exception.CustomException;
 import org.example.commercebackoffice.common.exception.ErrorCode;
+import org.example.commercebackoffice.customer.domain.Customer;
 import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
 import org.example.commercebackoffice.customer.dto.*;
-import org.example.commercebackoffice.customer.entity.CustomerEntity;
 import org.example.commercebackoffice.customer.repository.CustomerRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ public class CustomerService {
             CustomerStatus status,
             Pageable pageable
     ) {
-        Page<CustomerEntity> customers;
+        Page<Customer> customers;
 
         boolean hasKeyword = keyword != null && !keyword.isBlank();
         boolean hasStatus = status != null;
@@ -71,7 +71,7 @@ public class CustomerService {
     // 고객 상세 조회
     @Transactional(readOnly = true)
     public GetCustomerDetailResponse getOne(Long customerId) {
-        CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
         return new GetCustomerDetailResponse(
@@ -89,7 +89,7 @@ public class CustomerService {
     // 고객 정보 수정
     @Transactional
     public PutCustomerResponse updateCustomer(Long customerId, PutCustomerRequest request) {
-        CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
         customer.updateCustomer(
@@ -110,7 +110,7 @@ public class CustomerService {
     // 고객 상태 변경
     @Transactional
     public PatchCustomerResponse updateStatus(Long customerId, PatchCustomerRequest request) {
-        CustomerEntity customer = customerRepository.findById(customerId).orElseThrow(
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
                 () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
         customer.updateStatus(

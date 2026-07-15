@@ -1,28 +1,28 @@
 package org.example.commercebackoffice.customer.repository;
 
+import org.example.commercebackoffice.customer.domain.Customer;
 import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import org.example.commercebackoffice.customer.entity.CustomerEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
-    Page<CustomerEntity> findByNameContainingOrEmailContaining(
+    Page<Customer> findByNameContainingOrEmailContaining(
             String nameKeyword,
             String emailKeyword,
             Pageable pageable
     );
 
-    Page<CustomerEntity> findByStatus(
+    Page<Customer> findByStatus(
             CustomerStatus status,
             Pageable pageable
     );
 
-    Page<CustomerEntity> findByNameContainingAndStatusOrEmailContainingAndStatus(
+    Page<Customer> findByNameContainingAndStatusOrEmailContainingAndStatus(
             String nameKeyword,
             CustomerStatus nameStatus,
             String emailKeyword,
