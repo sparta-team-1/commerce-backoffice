@@ -1,13 +1,28 @@
 package org.example.commercebackoffice.admin.controller.admin;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
+import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.service.AdminService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admins")
 public class AdminController {
     private final AdminService adminService;
+
+    //관리자 계정 수정(super 관리자) 엔드포인트
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> editAdmin(@PathVariable Long id, @Valid @RequestBody AdminEditRequest editRequest,
+                                       @SessionAttribute SessionUser userInfo) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        AdminResponse resBody = adminService.editAdminInfo(curAdminId, id, editRequest);
+
+        return ResponseEntity.ok(resBody);
+    }
 }

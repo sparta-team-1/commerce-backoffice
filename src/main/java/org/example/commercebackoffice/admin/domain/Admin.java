@@ -11,6 +11,7 @@ import org.example.commercebackoffice.config.PasswordEncoder;
 import org.example.commercebackoffice.common.entity.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -58,5 +59,24 @@ public class Admin extends BaseEntity {
     //비밀번호 검증 로직
     public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(password, this.password);
+    }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    //이메일 변경 로직
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
+    //전화번호 변경 로직
+    public void changePhone(String phone) {
+        this.phoneNumber = phone;
+    }
+
+    //super 계정 확인 로직
+    public boolean isSuperAdmin() {
+        return this.role == AdminRole.SUPER_ADMIN;
     }
 }
