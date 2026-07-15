@@ -100,14 +100,14 @@ public class AdminService {
 
     //관리자 역할 변경 로직
     @Transactional
-    public AdminResponse changeAdminRole(Long curAdminId, Long id, AdminRole adminRole) {
+    public AdminResponse changeAdminRole(Long curAdminId, Long id, String role) {
         //지금 계정이 SUPER 관리자 계정인지 확인
         chkSuperAdmin(curAdminId);
 
         Admin found = findById(id);
 
                 //찾은 관리자 계정 역할 변경
-        found.changeRole(adminRole);
+        found.changeRole(AdminRole.from(role));
 
         Admin saved = adminRepository.save(found);
         return AdminMapper.toAdminResponse(saved);
@@ -115,14 +115,14 @@ public class AdminService {
 
     //관리자 상태 변경 로직
     @Transactional
-    public AdminResponse changeAdminStatus(Long curAdminId, Long id, AdminStatus adminStatus) {
+    public AdminResponse changeAdminStatus(Long curAdminId, Long id, String status) {
         //지금 계정이 SUPER 관리자 계정인지 확인
         chkSuperAdmin(curAdminId);
 
         Admin found = findById(id);
 
         //찾은 관리자 계정 상태 변경
-        found.changeStatus(adminStatus);
+        found.changeStatus(AdminStatus.from(status));
 
         Admin saved = adminRepository.save(found);
         return AdminMapper.toAdminResponse(saved);
