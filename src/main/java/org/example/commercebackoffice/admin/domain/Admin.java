@@ -30,7 +30,7 @@ public class Admin extends BaseEntity {
 
     @Column(nullable = false,length = 255)
     private String password;
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 13)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
