@@ -87,4 +87,12 @@ public class AdminController {
 
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@SessionAttribute SessionUser userInfo) {
+        Long curAdminId = userInfo.id();
+        AdminResponse resBody = adminService.me(curAdminId);
+
+        return ResponseEntity.ok(resBody);
+    }
 }

@@ -71,6 +71,14 @@ public class AdminService {
         return AdminMapper.toSessionUser(found);
     }
 
+    //사용자 본인 계정 정보 확인메로직
+    @Transactional(readOnly = true)
+    public AdminResponse me(Long id) {
+        Admin found = findById(id);
+
+        return AdminMapper.toAdminResponse(found);
+    }
+
     //관리자 계정 수정 로직
     @Transactional
     public AdminResponse editAdminInfo(Long curAdminId, Long id, AdminEditRequest editRequest) {
