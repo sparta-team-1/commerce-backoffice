@@ -9,6 +9,7 @@ import org.example.commercebackoffice.admin.controller.auth.dto.request.SignupRe
 import org.example.commercebackoffice.admin.domain.Admin;
 import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
 import org.example.commercebackoffice.admin.domain.enums.AdminRole;
+import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
 import org.example.commercebackoffice.admin.repository.AdminRepository;
 import org.example.commercebackoffice.config.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -103,6 +104,21 @@ public class AdminService {
 
                 //찾은 관리자 계정 역할 변경
         found.changeRole(adminRole);
+
+        Admin saved = adminRepository.save(found);
+        return AdminMapper.toAdminResponse(saved);
+    }
+
+    //관리자 상태 변경 로직
+    @Transactional
+    public AdminResponse changeAdminStatus(Long curAdminId, Long id, AdminStatus adminStatus) {
+        //지금 계정이 SUPER 관리자 계정인지 확인
+        chkSuperAdmin(curAdminId);
+
+        Admin found = findById(id);
+
+        //찾은 관리자 계정 상태 변경
+        found.changeStatus(adminStatus);
 
         Admin saved = adminRepository.save(found);
         return AdminMapper.toAdminResponse(saved);
