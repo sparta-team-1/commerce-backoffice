@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangePasswordRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminDetailResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminPageResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AdminService {
     private  final AdminRepository adminRepository;
     private final PasswordEncoder passwordEncoder; //암호화 부품
+    private final AdminRepositoryCustom adminRepositoryCustom;
 
     @Transactional
     public void signup(SignupRequest request) {
@@ -207,6 +209,13 @@ public class AdminService {
         Page<AdminResponse> result = adminRepositoryCustom.searchWithConditions(searchCondition, pageable);
 
         return AdminPageResponse.from(result);
+    }
+
+    @Transactional(readOnly = true)
+    public AdminDetailResponse getAdminDetail(Long id) {
+        Admin found = findById(id);
+
+        return AdminMapper.toAdminDetailResponse(found);
     }
 
     //id로 관리자 계정을 찾음
