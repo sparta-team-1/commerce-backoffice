@@ -203,7 +203,7 @@ public class AdminService {
     private void chkSuperAdmin(Long adminId) {
         Admin found = findById(adminId);
 
-        if(found.getRole() != AdminRole.SUPER_ADMIN)
+        if(!found.isSuperAdmin())
             throw new RuntimeException("해당 계정은 SUPER 관리가 계정이 아닙니다.");
     }
 
