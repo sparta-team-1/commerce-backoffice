@@ -86,17 +86,7 @@ public class AdminService {
         chkSuperAdmin(curAdminId);
 
         Admin found = findById(id);
-
-        //null값이 들어오면 변경하지 않음
-        if(editRequest.name() != null) {
-            found.changeName(editRequest.name());
-        }
-        if(editRequest.email() != null) {
-            found.changeEmail(editRequest.email());
-        }
-        if(editRequest.phone() != null) {
-            found.changePhone(editRequest.phone());
-        }
+        editAdmin(found, editRequest);
 
         Admin saved = adminRepository.save(found);
 
@@ -180,19 +170,11 @@ public class AdminService {
         adminRepository.save(found);
     }
 
+    //현재 관리자 계정 정보 수정 로직
     @Transactional
     public AdminResponse editCurrentAdminInfo(Long curAdminId, AdminEditRequest editRequest) {
         Admin found = findById(curAdminId);
-
-        if(editRequest.name() != null) {
-            found.changeName(editRequest.name());
-        }
-        if(editRequest.email() != null) {
-            found.changeEmail(editRequest.email());
-        }
-        if(editRequest.phone() != null) {
-            found.changePhone(editRequest.phone());
-        }
+        editAdmin(found, editRequest);
 
         Admin saved = adminRepository.save(found);
         return AdminMapper.toAdminResponse(saved);
@@ -210,5 +192,19 @@ public class AdminService {
 
         if(found.getRole() != AdminRole.SUPER_ADMIN)
             throw new RuntimeException("해당 계정은 SUPER 관리가 계정이 아닙니다.");
+    }
+
+    //관리자 계정 정보 수정
+    private void editAdmin(Admin admin, AdminEditRequest editRequest) {
+        //null이면 해당 필드 무시
+        if(editRequest.name() != null) {
+            admin.changeName(editRequest.name());
+        }
+        if(editRequest.email() != null) {
+            admin.changeEmail(editRequest.email());
+        }
+        if(editRequest.phone() != null) {
+            admin.changePhone(editRequest.phone());
+        }
     }
 }
