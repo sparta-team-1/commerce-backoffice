@@ -1,4 +1,4 @@
-﻿package org.example.commercebackoffice.order.domain.dto;
+package org.example.commercebackoffice.order.domain.dto;
 
 
 import jakarta.validation.constraints.Min;
