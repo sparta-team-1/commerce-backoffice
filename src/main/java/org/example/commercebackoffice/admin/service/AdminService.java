@@ -2,6 +2,8 @@ package org.example.commercebackoffice.admin.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminDetailResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
@@ -151,7 +153,23 @@ public class AdminService {
         }
         found.approve();
 
-        Admin saved = adminRepository.save(found);
+        adminRepository.save(found);
+    }
+
+    //관리자 계정 거부 로직
+    @Transactional
+    public void rejectAdmin(Long curAdminId, Long id, AdminRejectRequest rejectRequest) {
+        //지금 계정이 SUPER 관리자 계정인지 확인
+        chkSuperAdmin(curAdminId);
+
+        Admin found = findById(id);
+
+        //대기 상태가 아니면 예외 발생
+        if(found.getStatus() != AdminStatus.PENDING) {
+            throw new RuntimeException("승인 대기 상태인 관리자 계정이 아닙니다.");
+        }
+        found.reject(rejectRequest.rejectionMessage());
+        adminRepository.save(found);
     }
 
     //id로 관리자 계정을 찾음

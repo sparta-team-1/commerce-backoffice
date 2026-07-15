@@ -67,6 +67,13 @@ public class Admin extends BaseEntity {
         this.status = AdminStatus.ACTIVE;
     }
 
+    //계정 거부 로직
+    public void reject(String rejectionReason) {
+        this.rejectedAt = LocalDateTime.now();
+        this.rejectionReason = rejectionReason;
+        this.status = AdminStatus.REJECTED;
+    }
+
     //계정 삭제 로직
     public void delete() {
         super.delete();

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeRoleRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeStatusRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.service.AdminService;
@@ -52,6 +53,7 @@ public class AdminController {
         return ResponseEntity.ok(resBody);
     }
 
+    //관리자 계정 삭제 엔드포인트
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAdmin(@PathVariable Long id,
                                          @SessionAttribute SessionUser userInfo) {
@@ -63,12 +65,25 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    //관리자 계정 승인 엔드포인트
     @PatchMapping("/{id}/approve")
     public ResponseEntity<?> approveAdmin(@PathVariable Long id,
                                           @SessionAttribute SessionUser userInfo) {
         //세션에서 가져온 정보에서 id 추출
         Long curAdminId = userInfo.id();
         adminService.approveAdmin(curAdminId, id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    //관리자 계정 거부 엔드포인트
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<?> rejectAdmin(@PathVariable Long id,
+                                         @SessionAttribute SessionUser userInfo,
+                                         @Valid @RequestBody AdminRejectRequest rejectRequest) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        adminService.rejectAdmin(curAdminId, id, rejectRequest);
 
         return ResponseEntity.ok().build();
     }
