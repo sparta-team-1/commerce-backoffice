@@ -1,6 +1,8 @@
 package org.example.commercebackoffice.customer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
 import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
 import org.example.commercebackoffice.customer.dto.*;
 import org.example.commercebackoffice.customer.entity.CustomerEntity;
