@@ -20,7 +20,7 @@ public class CustomerController {
     private final CustomerService customerService;
 
     // 고객 리스트 조회
-    @GetMapping("/customers")
+    @GetMapping("/api/customers")
     public ResponseEntity<Page<GetCustomerListResponse>> getAll(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
@@ -43,7 +43,7 @@ public class CustomerController {
 
 
     // 고객 상세 조회
-    @GetMapping("/customers/{customerId}")
+    @GetMapping("/api/customers/{customerId}")
     public ResponseEntity<GetCustomerDetailResponse> getOne(@PathVariable Long customerId) {
         GetCustomerDetailResponse result = customerService.getOne(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
@@ -51,7 +51,7 @@ public class CustomerController {
 
 
     // 고객 정보 수정
-    @PutMapping("/customers/{customerId}")
+    @PutMapping("/api/customers/{customerId}")
     public ResponseEntity<PutCustomerResponse> updateCustomer(
             @PathVariable Long customerId,
             @RequestBody PutCustomerRequest request
@@ -62,7 +62,7 @@ public class CustomerController {
 
 
     // 고객 상태 변경
-    @PatchMapping("/customers/{customerId}")
+    @PatchMapping("/api/customers/{customerId}")
     public ResponseEntity<PatchCustomerResponse> updateStatus(
             @PathVariable Long customerId,
             @RequestBody PatchCustomerRequest patchCustomerRequest
@@ -73,7 +73,7 @@ public class CustomerController {
 
 
     // 고객 삭제
-    @DeleteMapping("/customers/{customerId}")
+    @DeleteMapping("/api/customers/{customerId}")
     public ResponseEntity<Void> delete(@PathVariable Long customerId) {
         customerService.delete(customerId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
