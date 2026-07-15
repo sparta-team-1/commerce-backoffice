@@ -124,13 +124,32 @@ public class AdminService {
         return AdminMapper.toAdminResponse(saved);
     }
 
+    //관리자 계정 삭제 로직
     @Transactional
     public void deleteAdmin(Long curAdminId, Long id) {
         //지금 계정이 SUPER 관리자 계정인지 확인
         chkSuperAdmin(curAdminId);
 
+        //도메인에서 삭제 로직 진행
         Admin found = findById(id);
         found.delete();
+
+        Admin saved = adminRepository.save(found);
+    }
+
+    //관리자 계정 승인 로직
+    @Transactional
+    public void approveAdmin(Long curAdminId, Long id) {
+        //지금 계정이 SUPER 관리자 계정인지 확인
+        chkSuperAdmin(curAdminId);
+
+        Admin found = findById(id);
+
+        //대기 상태가 아니면 예외 발생
+        if(found.getStatus() != AdminStatus.PENDING) {
+            throw new RuntimeException("승인 대기 상태인 관리자 계정이 아닙니다.");
+        }
+        found.approve();
 
         Admin saved = adminRepository.save(found);
     }

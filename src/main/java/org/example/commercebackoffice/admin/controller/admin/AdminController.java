@@ -62,4 +62,14 @@ public class AdminController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<?> approveAdmin(@PathVariable Long id,
+                                          @SessionAttribute SessionUser userInfo) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        adminService.approveAdmin(curAdminId, id);
+
+        return ResponseEntity.ok().build();
+    }
 }

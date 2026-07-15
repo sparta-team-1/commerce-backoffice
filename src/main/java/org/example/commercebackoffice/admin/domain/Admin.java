@@ -61,6 +61,12 @@ public class Admin extends BaseEntity {
         return passwordEncoder.matches(password, this.password);
     }
 
+    //계정 승인 로직
+    public void approve() {
+        this.approvedAt = LocalDateTime.now();
+        this.status = AdminStatus.ACTIVE;
+    }
+
     //계정 삭제 로직
     public void delete() {
         super.delete();
