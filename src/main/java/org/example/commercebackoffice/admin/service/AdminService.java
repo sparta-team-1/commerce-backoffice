@@ -4,16 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangePasswordRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
-import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminDetailResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.SignupRequest;
 import org.example.commercebackoffice.admin.domain.Admin;
-import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
 import org.example.commercebackoffice.admin.domain.enums.AdminRole;
 import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
 import org.example.commercebackoffice.admin.repository.AdminRepository;
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
 import org.example.commercebackoffice.config.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,14 +62,14 @@ public class AdminService {
     public SessionUser login(LoginRequest loginRequest) {
         //관리자 계정 존재 여부 확인
         Admin found = adminRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         if(!found.isStatusActive())
-            throw new RuntimeException("해당 계정은 활성 상태가 아닙니다.");
+            throw new CustomException(ErrorCode.USER_NOT_ACTIVE);
 
         //비밀번호 확인
         if(!found.verifyPassword(loginRequest.password(), passwordEncoder))
-            throw new RuntimeException("비밀번호 불일치");
+            throw new CustomException(ErrorCode.PASSWORD_INCORRECT);
 
         //해당 사용자 정보를 세션에 저장할 DTO로 매핑
         return AdminMapper.toSessionUser(found);
@@ -138,7 +138,7 @@ public class AdminService {
         Admin found = findById(id);
         found.delete();
 
-        Admin saved = adminRepository.save(found);
+        adminRepository.save(found);
     }
 
     //관리자 계정 승인 로직
@@ -151,7 +151,7 @@ public class AdminService {
 
         //대기 상태가 아니면 예외 발생
         if(found.getStatus() != AdminStatus.PENDING) {
-            throw new RuntimeException("승인 대기 상태인 관리자 계정이 아닙니다.");
+            throw new CustomException(ErrorCode.USER_STATUS_NOT_PENDING);
         }
         found.approve();
 
@@ -168,7 +168,7 @@ public class AdminService {
 
         //대기 상태가 아니면 예외 발생
         if(found.getStatus() != AdminStatus.PENDING) {
-            throw new RuntimeException("승인 대기 상태인 관리자 계정이 아닙니다.");
+            throw new CustomException(ErrorCode.USER_STATUS_NOT_PENDING);
         }
         found.reject(rejectRequest.rejectionMessage());
         adminRepository.save(found);
@@ -199,7 +199,7 @@ public class AdminService {
     //id로 관리자 계정을 찾음
     private Admin findById(Long id) {
         return adminRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("관리자 계정을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     //SUPER 관리자 계정인지 확인 후 해당 관리자 계정 반환
@@ -207,7 +207,7 @@ public class AdminService {
         Admin found = findById(adminId);
 
         if(!found.isSuperAdmin())
-            throw new RuntimeException("해당 계정은 SUPER 관리가 계정이 아닙니다.");
+            throw new CustomException(ErrorCode.USER_IS_NOT_SUPER_ADMIN);
     }
 
     //관리자 계정 정보 수정
