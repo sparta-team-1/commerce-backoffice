@@ -2,6 +2,8 @@ package org.example.commercebackoffice.admin.controller.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeRoleRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeStatusRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
@@ -22,6 +24,29 @@ public class AdminController {
         //세션에서 가져온 정보에서 id 추출
         Long curAdminId = userInfo.id();
         AdminResponse resBody = adminService.editAdminInfo(curAdminId, id, editRequest);
+
+        return ResponseEntity.ok(resBody);
+    }
+
+    //관리자 역할 수정 엔드포인트
+    @PatchMapping("/{id}/role")
+    public ResponseEntity<?> changeAdminRole(@PathVariable Long id,
+                                             @RequestBody AdminChangeRoleRequest changeRequest,
+                                             @SessionAttribute SessionUser userInfo) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        AdminResponse resBody = adminService.changeAdminRole(curAdminId, id, changeRequest.role());
+
+        return ResponseEntity.ok(resBody);
+    }
+    //관리자 상태 수정 엔드포인트
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> changeAdminStatus(@PathVariable Long id,
+                                               @RequestBody AdminChangeStatusRequest changeStatusRequest,
+                                               @SessionAttribute SessionUser userInfo) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        AdminResponse resBody = adminService.changeAdminStatus(curAdminId, id, changeStatusRequest.status());
 
         return ResponseEntity.ok(resBody);
     }

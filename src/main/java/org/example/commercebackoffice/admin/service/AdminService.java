@@ -93,6 +93,21 @@ public class AdminService {
         return AdminMapper.toAdminResponse(saved);
     }
 
+    //관리자 역할 변경 로직
+    @Transactional
+    public AdminResponse changeAdminRole(Long curAdminId, Long id, AdminRole adminRole) {
+        Admin found = findById(id);
+
+        //지금 계정이 SUPER 관리자 계정인지 확인
+        chkSuperAdmin(curAdminId);
+
+        //찾은 관리자 계정 역할 변경
+        found.changeRole(adminRole);
+
+        Admin saved = adminRepository.save(found);
+        return AdminMapper.toAdminResponse(saved);
+    }
+
     //id로 관리자 계정을 찾음
     private Admin findById(Long id) {
         return adminRepository.findById(id)

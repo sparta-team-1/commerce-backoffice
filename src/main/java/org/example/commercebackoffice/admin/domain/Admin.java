@@ -61,6 +61,11 @@ public class Admin extends BaseEntity {
         return passwordEncoder.matches(password, this.password);
     }
 
+    //역할 변경 로직
+    public void changeRole(AdminRole role) {
+        this.role = role;
+    }
+
     public void changeName(String name) {
         this.name = name;
     }
