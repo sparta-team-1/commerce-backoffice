@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.*;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminDetailResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminPageResponse;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
@@ -132,6 +133,13 @@ public class AdminController {
         AdminSearchCondition searchCondition = new AdminSearchCondition(page, limit, sortBy, sortOrder, status, role, search);
 
         AdminPageResponse resBody = adminService.getAdminsWithCondition(searchCondition);
+
+        return ResponseEntity.ok(resBody);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAdminById(@PathVariable Long id) {
+        AdminDetailResponse resBody = adminService.getAdminDetail(id);
 
         return ResponseEntity.ok(resBody);
     }
