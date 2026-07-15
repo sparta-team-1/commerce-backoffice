@@ -1,6 +1,7 @@
 package org.example.commercebackoffice.admin.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangePasswordRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminDetailResponse;
@@ -177,6 +178,18 @@ public class AdminService {
         editAdmin(found, editRequest);
 
         Admin saved = adminRepository.save(found);
+        return AdminMapper.toAdminResponse(saved);
+    }
+
+    //현재 관리자 계정 비밀번호 변경 로직
+    @Transactional
+    public AdminResponse changeCurrentAdminPassword(Long curAdminId, AdminChangePasswordRequest changePasswordRequest) {
+        Admin found = findById(curAdminId);
+
+        //도메인에서 비밀번호 변경
+        found.changePassword(changePasswordRequest.password(),  passwordEncoder);
+        Admin saved = adminRepository.save(found);
+
         return AdminMapper.toAdminResponse(saved);
     }
 

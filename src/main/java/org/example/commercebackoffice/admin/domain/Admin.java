@@ -105,6 +105,11 @@ public class Admin extends BaseEntity {
         this.phoneNumber = phone;
     }
 
+    //비밀번호 변경 로직
+    public void changePassword(String newPassword, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(newPassword);
+    }
+
     //super 계정 확인 로직
     public boolean isSuperAdmin() {
         return this.role == AdminRole.SUPER_ADMIN;

@@ -6,6 +6,7 @@ import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminCh
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminChangeStatusRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminEditRequest;
 import org.example.commercebackoffice.admin.controller.admin.dto.request.AdminRejectRequest;
+import org.example.commercebackoffice.admin.controller.admin.dto.request.*;
 import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.service.AdminService;
@@ -105,6 +106,17 @@ public class AdminController {
         //세션에서 가져온 정보에서 id 추출
         Long curAdminId = userInfo.id();
         AdminResponse resBody = adminService.editCurrentAdminInfo(curAdminId, editRequest);
+
+        return ResponseEntity.ok(resBody);
+    }
+
+    //현재 사용자 계정 비밀번호 수정 엔드포인트
+    @PatchMapping("/me/password")
+    public ResponseEntity<?> changeCurrentUserPassword(@SessionAttribute SessionUser userInfo,
+                                                       @Valid @RequestBody AdminChangePasswordRequest changeRequest) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+        AdminResponse resBody = adminService.changeCurrentAdminPassword(curAdminId, changeRequest);
 
         return ResponseEntity.ok(resBody);
     }
