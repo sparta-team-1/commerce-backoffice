@@ -11,8 +11,8 @@ public enum ErrorCode {
     USER_NOT_ACTIVE(HttpStatus.UNAUTHORIZED, "USER NOT ACTIVE", "해당 계정은 활성화 상태가 아닙니다."),
     USER_STATUS_NOT_PENDING(HttpStatus.BAD_REQUEST, "USER IS NOT PENDING", "해당 계정은 승인 대기 상태가 아닙니다."),
     USER_IS_NOT_SUPER_ADMIN(HttpStatus.UNAUTHORIZED, "USER IS NOT SUPER ADMIN", "해당 계정은 슈퍼 관리자 계정이 아닙니다."),
-    UNKNOWN_STATUS(HttpStatus.BAD_REQUEST, "UNKNOWN STATUS", "상태 목록에 없는 상태입니다."),
-    UNKNOWN_ROLE(HttpStatus.BAD_REQUEST, "UNKNOWN ROLE", "역할 목록에 없는 역할입니다.");
+    UNKNOWN_STATUS(HttpStatus.BAD_REQUEST, "UNKNOWN STATUS", "상태 목록에 없는 상태입니다. %s"),
+    UNKNOWN_ROLE(HttpStatus.BAD_REQUEST, "UNKNOWN ROLE", "역할 목록에 없는 역할입니다. %s");
 
     private final HttpStatus httpStatus;
     private final String errorCode;

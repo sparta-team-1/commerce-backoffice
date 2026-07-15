@@ -1,5 +1,8 @@
 package org.example.commercebackoffice.admin.domain.enums;
 
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
+
 public enum AdminStatus {
     PENDING, ACTIVE, INACTIVE, SUSPENDED, REJECTED;
 
@@ -7,7 +10,7 @@ public enum AdminStatus {
         try {
             return valueOf(status);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Unknown status: " + status);
+            throw new CustomException(ErrorCode.UNKNOWN_STATUS, status);
         }
     }
 }
