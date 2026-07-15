@@ -30,15 +30,9 @@ public class OrderController {
 
     @GetMapping
     public ResponseEntity<PageResponseDto<OrderListResponseDto>> getOrders(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "orderedAt") String sort,
-            @RequestParam(defaultValue = "desc") String order,
-            @RequestParam(required = false) OrderStatus status
+            @ModelAttribute OrderSearchCondition condition
     ) {
-        PageResponseDto<OrderListResponseDto> response =
-                orderService.getOrders(keyword, page, size, sort, order, status);
+        PageResponseDto<OrderListResponseDto> response = orderService.getOrders(condition);
         return ResponseEntity.ok(response);
     }
 
