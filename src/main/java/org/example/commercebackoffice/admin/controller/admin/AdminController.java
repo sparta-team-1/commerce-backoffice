@@ -39,6 +39,7 @@ public class AdminController {
 
         return ResponseEntity.ok(resBody);
     }
+
     //관리자 상태 수정 엔드포인트
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> changeAdminStatus(@PathVariable Long id,
@@ -49,5 +50,16 @@ public class AdminController {
         AdminResponse resBody = adminService.changeAdminStatus(curAdminId, id, changeStatusRequest.status());
 
         return ResponseEntity.ok(resBody);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteAdmin(@PathVariable Long id,
+                                         @SessionAttribute SessionUser userInfo) {
+        //세션에서 가져온 정보에서 id 추출
+        Long curAdminId = userInfo.id();
+
+        adminService.deleteAdmin(curAdminId, id);
+
+        return ResponseEntity.noContent().build();
     }
 }

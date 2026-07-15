@@ -61,6 +61,12 @@ public class Admin extends BaseEntity {
         return passwordEncoder.matches(password, this.password);
     }
 
+    //계정 삭제 로직
+    public void delete() {
+        super.delete();
+        this.status = AdminStatus.SUSPENDED;
+    }
+
     //상태 변경 로직
     public void changeStatus(AdminStatus status) {
         this.status = status;

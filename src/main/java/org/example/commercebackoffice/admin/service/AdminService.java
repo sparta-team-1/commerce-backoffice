@@ -124,6 +124,17 @@ public class AdminService {
         return AdminMapper.toAdminResponse(saved);
     }
 
+    @Transactional
+    public void deleteAdmin(Long curAdminId, Long id) {
+        //지금 계정이 SUPER 관리자 계정인지 확인
+        chkSuperAdmin(curAdminId);
+
+        Admin found = findById(id);
+        found.delete();
+
+        Admin saved = adminRepository.save(found);
+    }
+
     //id로 관리자 계정을 찾음
     private Admin findById(Long id) {
         return adminRepository.findById(id)
