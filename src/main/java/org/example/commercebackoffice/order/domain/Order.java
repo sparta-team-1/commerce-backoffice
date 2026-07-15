@@ -76,4 +76,19 @@ public class Order extends BaseEntity {
         order.status = OrderStatus.READY;
         return order;
     }
+
+    public void updateStatus(OrderStatus newStatus) {
+        if (!this.status.canTransitionTo(newStatus)) {
+            throw new RuntimeException("잘못된 상태 변경 순서입니다.");
+        }
+        this.status = newStatus;
+    }
+
+    public void cancel(String cancelReason) {
+        if (this.status != OrderStatus.READY) {
+            throw new RuntimeException("준비중 상태에서만 취소할 수 있습니다.");
+        }
+        this.status = OrderStatus.CANCELLED;
+        this.cancelReason = cancelReason;
+    }
 }
