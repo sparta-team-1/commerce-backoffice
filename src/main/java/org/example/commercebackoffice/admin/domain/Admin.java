@@ -44,6 +44,7 @@ public class Admin extends BaseEntity {
     private LocalDateTime rejectedAt;
     private String rejectionReason;
 
+    //빌더 패턴 적용
     @Builder
     public Admin(String email, String name, String password, String phoneNumber, AdminRole role, AdminStatus status) {
         this.email = email;
@@ -54,6 +55,7 @@ public class Admin extends BaseEntity {
         this.status = status;
     }
 
+    //비밀번호 검증 로직
     public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(password, this.password);
     }

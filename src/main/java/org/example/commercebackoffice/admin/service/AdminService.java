@@ -51,13 +51,17 @@ public class AdminService {
     }
 
     @Transactional(readOnly = true)
+    //로그인 로직
     public SessionUser login(LoginRequest loginRequest) {
+        //관리자 계정 존재 여부 확인
         Admin found = adminRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
+        //비밀번호 확인
         if(!found.verifyPassword(loginRequest.password(), passwordEncoder))
             throw new RuntimeException("비밀번호 불일치");
 
+        //해당 사용자 정보를 세션에 저장할 DTO로 매핑
         return AdminMapper.toSessionUser(found);
     }
 }

@@ -34,6 +34,7 @@ public class AuthController {
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpSession session) {
         SessionUser sessionUser = adminService.login(loginRequest);
 
+        //세션 정보 저장, 만료 기간 설정(1시간)
         session.setAttribute("userInfo", sessionUser);
         session.setMaxInactiveInterval(SESSION_EXPIRATION);
 
@@ -44,11 +45,13 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpSession session) {
         session.invalidate();
 
+        //헤더의 cache 비우고 재검증 요구 및 즉시 만료
         HttpHeaders headers = new HttpHeaders();
         headers.setCacheControl("no-cache, no-store, must-revalidate");
         headers.setPragma("no-cache");
         headers.setExpires(0);
 
+        //JSESSIONID 쿠키 값 null로 설정 및 즉시 만료
         ResponseCookie cookie = ResponseCookie.from("JSESSIONID", "")
                 .path("/")
                 .maxAge(0)
