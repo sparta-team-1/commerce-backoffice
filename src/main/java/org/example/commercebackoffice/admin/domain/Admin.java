@@ -66,6 +66,7 @@ public class Admin extends BaseEntity {
         this.role = role;
     }
 
+    //이름 변경 로직
     public void changeName(String name) {
         this.name = name;
     }

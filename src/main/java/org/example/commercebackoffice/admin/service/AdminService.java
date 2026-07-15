@@ -71,10 +71,10 @@ public class AdminService {
     //관리자 계정 수정 로직
     @Transactional
     public AdminResponse editAdminInfo(Long curAdminId, Long id, AdminEditRequest editRequest) {
-        Admin found = findById(id);
-
         //지금 계정이 SUPER 관리자 계정인지 확인
         chkSuperAdmin(curAdminId);
+
+        Admin found = findById(id);
 
         //null값이 들어오면 변경하지 않음
         if(editRequest.name() != null) {
@@ -96,12 +96,12 @@ public class AdminService {
     //관리자 역할 변경 로직
     @Transactional
     public AdminResponse changeAdminRole(Long curAdminId, Long id, AdminRole adminRole) {
-        Admin found = findById(id);
-
         //지금 계정이 SUPER 관리자 계정인지 확인
         chkSuperAdmin(curAdminId);
 
-        //찾은 관리자 계정 역할 변경
+        Admin found = findById(id);
+
+                //찾은 관리자 계정 역할 변경
         found.changeRole(adminRole);
 
         Admin saved = adminRepository.save(found);
@@ -114,7 +114,7 @@ public class AdminService {
                 .orElseThrow(() -> new RuntimeException("관리자 계정을 찾을 수 없습니다."));
     }
 
-    //SUPER 관리자 계정인지 확인
+    //SUPER 관리자 계정인지 확인 후 해당 관리자 계정 반환
     private void chkSuperAdmin(Long adminId) {
         Admin found = findById(adminId);
 
