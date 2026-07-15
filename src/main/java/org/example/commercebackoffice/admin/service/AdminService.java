@@ -64,6 +64,9 @@ public class AdminService {
         Admin found = adminRepository.findByEmail(loginRequest.email())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
+        if(!found.isStatusActive())
+            throw new RuntimeException("해당 계정은 활성 상태가 아닙니다.");
+
         //비밀번호 확인
         if(!found.verifyPassword(loginRequest.password(), passwordEncoder))
             throw new RuntimeException("비밀번호 불일치");

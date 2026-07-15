@@ -114,4 +114,9 @@ public class Admin extends BaseEntity {
     public boolean isSuperAdmin() {
         return this.role == AdminRole.SUPER_ADMIN;
     }
+
+    //현재 계정 상태가 ACTIVE인지 확인하는 로직
+    public boolean isStatusActive() {
+        return this.status == AdminStatus.ACTIVE;
+    }
 }
