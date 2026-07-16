@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.domain.Admin;
 import org.example.commercebackoffice.admin.repository.AdminRepository;
 import org.example.commercebackoffice.customer.domain.Customer;
+import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
 import org.example.commercebackoffice.customer.repository.CustomerRepository;
 import org.example.commercebackoffice.item.domain.Item;
 import org.example.commercebackoffice.item.repository.ItemRepository;
@@ -33,6 +34,9 @@ public class OrderService {
         Customer customer = customerRepository.findById(requestDto.getCustomerId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND));
 
+        if (customer.getStatus() == CustomerStatus.INACTIVE) {
+            throw new CustomException(ErrorCode. CUSTOMER_NOT_FOUND);
+        }
 
         Item item = itemRepository.findById(requestDto.getItemId())
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
@@ -47,8 +51,8 @@ public class OrderService {
         int quantity = requestDto.getQuantity();
 
         // 주문시 상품 재고 차감
-        // item.validateOrderable(quantity);
-        // item.decreaseStock(quantity);
+        item.validateOrderable(quantity);
+        item.decreaseStock(quantity);
 
         Order order = Order.create(customer, item, admin, quantity, item.getPrice() * quantity);
         Order saved = orderRepository.save(order);
@@ -106,7 +110,7 @@ public class OrderService {
         order.cancel(requestDto.getCancelReason());
 
         // 재고 복구 로직
-        // order.getItem().increaseStock(order.getQuantity());
+        order.getItem().increaseStock(order.getQuantity());
 
         return new OrderResponseDto(order);
     }

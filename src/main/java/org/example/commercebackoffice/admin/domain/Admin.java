@@ -11,7 +11,6 @@ import org.example.commercebackoffice.config.PasswordEncoder;
 import org.example.commercebackoffice.common.entity.BaseEntity;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 @Entity
@@ -22,6 +21,7 @@ public class Admin extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     @Column(nullable = false, length = 50)
     private String name;
 
@@ -30,6 +30,7 @@ public class Admin extends BaseEntity {
 
     @Column(nullable = false,length = 255)
     private String password;
+    
     @Column(nullable = false, length = 13)
     private String phoneNumber;
 
@@ -39,6 +40,7 @@ public class Admin extends BaseEntity {
     @Enumerated(EnumType.STRING) //db에 저장 시 문자열 그대로 저장 -> 유지보수성 향상
     @Column(nullable = false)
     private AdminStatus status;
+    
     @Column(nullable = false)
     private LocalDateTime approvedAt;
 

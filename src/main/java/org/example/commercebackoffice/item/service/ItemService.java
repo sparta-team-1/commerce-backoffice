@@ -1,6 +1,8 @@
 package org.example.commercebackoffice.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.example.commercebackoffice.admin.domain.Admin;
@@ -26,7 +28,7 @@ public class ItemService {
     @Transactional
     public ItemResponseDto createItem(ItemCreateRequestDto requestDto) {
         Admin admin = adminRepository.findById(requestDto.getAdminId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자 ID입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
         Item item = new Item(admin, requestDto.getName(), requestDto.getCategory(),
                 requestDto.getPrice(), requestDto.getStock(), requestDto.getStatus());
@@ -36,7 +38,7 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemResponseDto getItem(Long itemId) {
         Item item = itemRepository.findByIdAndStatusNot(itemId, ItemStatus.DISCONTINUED)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 삭제된 상품입니다. 상품 ID: " + itemId));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         return new ItemResponseDto(item);
     }
 
@@ -49,7 +51,7 @@ public class ItemService {
     @Transactional
     public ItemResponseDto updateItem(Long itemId, ItemUpdateRequestDto requestDto) {
         Item item = itemRepository.findByIdAndStatusNot(itemId, ItemStatus.DISCONTINUED)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 수정할 수 없는 상품입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND_OR_UNMODIFIABLE));
 
         item.updateItem(requestDto.getName(), requestDto.getCategory(), requestDto.getPrice());
         return new ItemResponseDto(item);
@@ -59,7 +61,7 @@ public class ItemService {
     @Transactional
     public ItemResponseDto updateItemStatus(Long itemId, ItemStatusUpdateRequestDto requestDto) {
         Item item = itemRepository.findByIdAndStatusNot(itemId, ItemStatus.DISCONTINUED)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 수정할 수 없는 상품입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND_OR_UNMODIFIABLE));
 
         item.updateStatus(requestDto.getStatus());
         return new ItemResponseDto(item);
@@ -69,7 +71,7 @@ public class ItemService {
     @Transactional
     public ItemResponseDto updateItemStock(Long itemId, ItemStockUpdateRequestDto requestDto) {
         Item item = itemRepository.findByIdAndStatusNot(itemId, ItemStatus.DISCONTINUED)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 수정할 수 없는 상품입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND_OR_UNMODIFIABLE));
 
         item.updateStock(requestDto.getStock());
         return new ItemResponseDto(item);
@@ -78,7 +80,7 @@ public class ItemService {
     @Transactional
     public void deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         item.discontinue();
     }
 }
