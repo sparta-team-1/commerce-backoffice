@@ -68,7 +68,7 @@ public class AdminService {
     public SessionUser login(LoginRequest loginRequest) {
         //관리자 계정 존재 여부 확인
         Admin found = adminRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
 
         if(!found.isStatusActive())
             throw new CustomException(ErrorCode.USER_NOT_ACTIVE);
@@ -225,7 +225,7 @@ public class AdminService {
     //id로 관리자 계정을 찾음
     private Admin findById(Long id) {
         return adminRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
     }
 
     //SUPER 관리자 계정인지 확인 후 해당 관리자 계정 반환
