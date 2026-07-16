@@ -10,15 +10,8 @@ public enum ErrorCode {
     USER_IS_NOT_SUPER_ADMIN(HttpStatus.UNAUTHORIZED, "USER IS NOT SUPER ADMIN", "해당 계정은 슈퍼 관리자 계정이 아닙니다."),
     UNKNOWN_STATUS(HttpStatus.BAD_REQUEST, "UNKNOWN STATUS", "상태 목록에 없는 상태입니다. %s"),
     UNKNOWN_ROLE(HttpStatus.BAD_REQUEST, "UNKNOWN ROLE", "역할 목록에 없는 역할입니다. %s"),
-    //주문 에러 메세지
-    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "SCHEDULE NOT FOUND", "해당 일정을 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT NOT FOUND", "해당 댓글을 찾을 수 없습니다."),
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER NOT FOUND", "사용자를 찾을 수 없습니다."),
-    NOT_AUTHOR(HttpStatus.UNAUTHORIZED, "NOT AUTHOR", "작성자가 아닙니다."),
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "접근이 거부되었습니다."),
     CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "CUSTOMER NOT FOUND", "해당 고객을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"REVIEW NOT FOUND","리뷰를 찾을 수 없습니다"),
-    //주문 에러 메세지
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "ITEM NOT FOUND", "상품을 찾을 수 없습니다."),
     ADMIN_NOT_FOUND(HttpStatus.NOT_FOUND, "ADMIN NOT FOUND", "관리자를 찾을 수 없습니다."),
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER NOT FOUND", "주문을 찾을 수 없습니다."),
