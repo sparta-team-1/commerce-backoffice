@@ -26,7 +26,11 @@ public class ReviewService {
     @Transactional
     public ReviewResponseDto createReview(ReviewCreateRequestDto requestDto) {
         Order order = orderRepository.findById(requestDto.getOrderId())
-                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+
+        if (reviewRepository.existsByOrderId(requestDto.getOrderId())) {
+            throw new CustomException(ErrorCode.ALREADY_REVIEWED_ORDER);
+        }
 
         Review review = Review.create(order, requestDto.getRating(), requestDto.getContent());
         Review saved = reviewRepository.save(review);
@@ -42,6 +46,8 @@ public class ReviewService {
         Page<Review> reviews = reviewRepository.search(condition.getRating(), condition.getKeyword(), pageable);
         return new PageResponseDto<>(reviews.map(ReviewListResponseDto::new));
     }
+    
+    
     @Transactional(readOnly = true)
     public ReviewDetailResponseDto getReviewDetail(Long reviewId) {
         Review review = reviewRepository.findDetailById(reviewId)

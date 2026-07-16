@@ -33,4 +33,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findDetailById(
             @Param("reviewId") Long reviewId
     );
+
+    boolean existsByOrderId(Long orderId);
 }
