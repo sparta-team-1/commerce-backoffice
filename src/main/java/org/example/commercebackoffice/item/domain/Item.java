@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.commercebackoffice.admin.domain.Admin;
 import org.example.commercebackoffice.common.entity.BaseEntity;
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
 import org.example.commercebackoffice.item.domain.enums.ItemStatus;
 
 @Getter
@@ -44,7 +46,7 @@ public class Item extends BaseEntity {
     // [핵심 로직 1] 주문 전 상품 상태 및 재고 검증
     public void validateOrderable(Integer quantity) {
         if (this.status != ItemStatus.ON_SALE) {
-            throw new IllegalArgumentException("현재 판매 중인 상품이 아닙니다.");
+            throw new CustomException(ErrorCode.ITEM_NOT_FOUND);
         }
         if (this.stock < quantity) {
             throw new IllegalArgumentException("상품의 재고가 부족합니다. (현재 재고: " + this.stock + ")");

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
+    Page<Customer> findByStatusNot(CustomerStatus status, Pageable pageable);
+
     Page<Customer> findByNameContainingOrEmailContaining(
             String nameKeyword,
             String emailKeyword,
