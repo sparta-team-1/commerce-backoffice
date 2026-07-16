@@ -36,7 +36,7 @@ public class AdminService {
     public void signup(SignupRequest request) {
         //이메일 중복 여부 확인
         if (adminRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다");
+            throw new CustomException(ErrorCode.EMAIL_IN_USE);
         }
         //비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.getPassword());
