@@ -44,7 +44,7 @@ public class Item extends BaseEntity {
     // [핵심 로직 1] 주문 전 상품 상태 및 재고 검증
     public void validateOrderable(Integer quantity) {
         if (this.status != ItemStatus.ON_SALE) {
-            throw new IllegalStateException("현재 판매 중인 상품이 아닙니다.");
+            throw new IllegalArgumentException("현재 판매 중인 상품이 아닙니다.");
         }
         if (this.stock < quantity) {
             throw new IllegalArgumentException("상품의 재고가 부족합니다. (현재 재고: " + this.stock + ")");
@@ -66,7 +66,7 @@ public class Item extends BaseEntity {
             throw new IllegalArgumentException("복구할 재고 수량은 0보다 커야 합니다.");
         }
         if (this.status == ItemStatus.DISCONTINUED) {
-            throw new IllegalStateException("단종된 상품은 재고를 복구할 수 없습니다.");
+            throw new IllegalArgumentException("단종된 상품은 재고를 복구할 수 없습니다.");
         }
         this.stock += quantity;
         updateStatusByStock(); // 재고 복구 후 자동으로 상태 동기화 (SOLD_OUT -> ON_SALE)
@@ -93,7 +93,7 @@ public class Item extends BaseEntity {
     // [핵심 로직 2] 수동 상태 변경
     public void updateStatus(ItemStatus newStatus) {
         if (this.status == ItemStatus.DISCONTINUED) {
-            throw new IllegalStateException("단종된 상품은 상태를 변경할 수 없습니다.");
+            throw new IllegalArgumentException("단종된 상품은 상태를 변경할 수 없습니다.");
         }
         this.status = newStatus;
     }
@@ -101,7 +101,7 @@ public class Item extends BaseEntity {
     // [핵심 로직 3] 수동 재고 변경
     public void updateStock(Integer newStock) {
         if (this.status == ItemStatus.DISCONTINUED) {
-            throw new IllegalStateException("단종된 상품은 재고를 변경할 수 없습니다.");
+            throw new IllegalArgumentException("단종된 상품은 재고를 변경할 수 없습니다.");
         }
         this.stock = newStock;
         updateStatusByStock(); // 재고가 수동으로 변경되면 이에 따라 상태도 자동 갱신
