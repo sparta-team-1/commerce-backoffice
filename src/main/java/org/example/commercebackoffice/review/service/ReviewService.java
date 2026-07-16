@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.order.domain.Order;
 import org.example.commercebackoffice.order.domain.dto.PageResponseDto;
 import org.example.commercebackoffice.order.repository.OrderRepository;
-import org.example.commercebackoffice.review.exception.GlobalExceptionHandler;
+import org.example.commercebackoffice.review.ReviewNotFoundException;
 import org.example.commercebackoffice.review.domain.Review;
 import org.example.commercebackoffice.review.domain.dto.*;
 import org.example.commercebackoffice.review.repository.ReviewRepository;
@@ -45,7 +45,7 @@ public class ReviewService {
     public ReviewDetailResponseDto getReviewDetail(Long reviewId) {
         Review review = reviewRepository.findDetailById(reviewId)
                 .orElseThrow(
-                        () -> new GlobalExceptionHandler((reviewId))
+                        () -> new ReviewNotFoundException((reviewId))
                 );
         //조회한 Review 엔티티를 상세 응답 DTO로 변환하여 Controller에 반환
         return  new ReviewDetailResponseDto(review);
@@ -56,7 +56,7 @@ public class ReviewService {
         //reviewId를 이용해 데이터베이스에서 리뷰를 찾는다.
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(
-                        ()-> new GlobalExceptionHandler(reviewId)
+                        ()-> new ReviewNotFoundException(reviewId)
                 );
         //찾은 Review 객체를 리포지토리에 전달해 삭제
         //트렌잭션이 정상적으로 끝나면
