@@ -7,9 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.commercebackoffice.admin.domain.enums.AdminRole;
 import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
+import org.example.commercebackoffice.config.PasswordEncoder;
 import org.example.commercebackoffice.common.entity.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Entity
@@ -28,7 +30,7 @@ public class Admin extends BaseEntity {
 
     @Column(nullable = false,length = 255)
     private String password;
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 13)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -43,14 +45,78 @@ public class Admin extends BaseEntity {
     private LocalDateTime rejectedAt;
     private String rejectionReason;
 
-
+    //빌더 패턴 적용
     @Builder
-    public Admin (String name, String email, String password, String phoneNumber,AdminRole role, AdminStatus status){
+    public Admin(String email, String name, String password, String phoneNumber, AdminRole role, AdminStatus status) {
+        this.email = email;
         this.name = name;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
         this.status = status;
+    }
 
+    //비밀번호 검증 로직
+    public boolean verifyPassword(String password, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(password, this.password);
+    }
+
+    //계정 승인 로직
+    public void approve() {
+        this.approvedAt = LocalDateTime.now();
+        this.status = AdminStatus.ACTIVE;
+    }
+
+    //계정 거부 로직
+    public void reject(String rejectionReason) {
+        this.rejectedAt = LocalDateTime.now();
+        this.rejectionReason = rejectionReason;
+        this.status = AdminStatus.REJECTED;
+    }
+
+    //계정 삭제 로직
+    public void delete() {
+        super.delete();
+        this.status = AdminStatus.SUSPENDED;
+    }
+
+    //상태 변경 로직
+    public void changeStatus(AdminStatus status) {
+        this.status = status;
+    }
+
+    //역할 변경 로직
+    public void changeRole(AdminRole role) {
+        this.role = role;
+    }
+
+    //이름 변경 로직
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    //이메일 변경 로직
+    public void changeEmail(String email) {
+        this.email = email;
+    }
+
+    //전화번호 변경 로직
+    public void changePhone(String phone) {
+        this.phoneNumber = phone;
+    }
+
+    //비밀번호 변경 로직
+    public void changePassword(String newPassword, PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(newPassword);
+    }
+
+    //super 계정 확인 로직
+    public boolean isSuperAdmin() {
+        return this.role == AdminRole.SUPER_ADMIN;
+    }
+
+    //현재 계정 상태가 ACTIVE인지 확인하는 로직
+    public boolean isStatusActive() {
+        return this.status == AdminStatus.ACTIVE;
     }
 }
