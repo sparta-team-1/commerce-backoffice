@@ -51,4 +51,8 @@ public class Customer {
     public void updateStatus(CustomerStatus status) {
         this.status = status;
     }
+
+    public void changeStatus(CustomerStatus status) {
+        this.status = status;
+    }
 }

@@ -49,10 +49,12 @@ public class CustomerService {
                     pageable);
 
         } else if (hasStatus) {
+            // 상태 조건만 존재 -> 전달받은 상태(ACTIVE, SUSPENDED 등)로 조회
             customers = customerRepository.findByStatus(status, pageable);
 
-        } else {
-            customers = customerRepository.findAll(pageable);
+        }  else {
+            // 조건이 아무것도 없을 때 -> 기본적으로 INACTIVE가 아닌 회원 전체 조회
+            customers = customerRepository.findByStatusNot(CustomerStatus.INACTIVE, pageable);
         }
 
         /* return customers.map(customer -> new GetCustomerListResponse(
@@ -93,6 +95,10 @@ public class CustomerService {
                 () -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND)
         );
 
+        if (customer.getStatus() == CustomerStatus.INACTIVE) {
+            throw new CustomException(ErrorCode.CUSTOMER_NOT_FOUND);
+        }
+        
         Long totalOrderCount = orderRepository.countByCustomerId(customerId); // 고객 조회 데이터 확장
         Long totalPurchaseAmount = orderRepository.sumTotalPriceByCustomerId(customerId); // 고객 조회 데이터 확장
 
@@ -150,10 +156,16 @@ public class CustomerService {
     // 고객 삭제
     @Transactional
     public void delete(Long customerId) {
-        boolean existence = customerRepository.existsById(customerId);
-        if (!existence) {
-            throw new CustomException(ErrorCode.CUSTOMER_NOT_FOUND);
+        // 1. 존재 여부 확인 및 엔티티 조회
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND));
+
+        // 2. 이미 탈퇴(삭제)된 회원인지 검증 (선택 사항이지만 안전장치로 권장)
+        if (customer.getStatus() == CustomerStatus.INACTIVE) {
+            throw new CustomException(ErrorCode.CUSTOMER_ALREADY_DELETED); // 적절한 예외 처리
         }
-        customerRepository.deleteById(customerId);
+
+        // 3. 상태값을 INACTIVE로 변경하여 Soft Delete 수행
+        customer.changeStatus(CustomerStatus.INACTIVE);
     }
 }
