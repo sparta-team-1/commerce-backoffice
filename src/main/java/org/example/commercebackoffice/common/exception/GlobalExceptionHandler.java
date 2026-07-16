@@ -3,6 +3,7 @@ package org.example.commercebackoffice.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,6 +32,18 @@ public class GlobalExceptionHandler {
         );
         return  ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ResponseEntity<ErrorResponse> handleServletRequestBindingException(
+            ServletRequestBindingException e
+    ) {
+        String message = "세션이 만료되었거나 로그인되지 않았습니다.";
+        ErrorResponse response = new ErrorResponse(HttpStatus.FORBIDDEN.value(), message);
+
+        return  ResponseEntity
+                .status(response.getStatus())
                 .body(response);
     }
 
