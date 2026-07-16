@@ -1,6 +1,5 @@
 package org.example.commercebackoffice.order.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.admin.domain.Admin;
 import org.example.commercebackoffice.admin.repository.AdminRepository;
@@ -10,13 +9,13 @@ import org.example.commercebackoffice.item.domain.Item;
 import org.example.commercebackoffice.item.repository.ItemRepository;
 import org.example.commercebackoffice.order.domain.Order;
 import org.example.commercebackoffice.order.domain.dto.*;
-import org.example.commercebackoffice.order.domain.enums.OrderStatus;
 import org.example.commercebackoffice.order.repository.OrderRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -55,15 +54,24 @@ public class OrderService {
     }
     
     // 주문 리스트 조회
-    @Transactional
-    public PageResponseDto<OrderListResponseDto> getOrders(
-            String keyword, int page, int size, String sort, String order, OrderStatus status) {
+    @Transactional(readOnly = true) 
+    public PageResponseDto<OrderListResponseDto> getOrders(OrderSearchCondition condition) {
 
-        Sort.Direction direction = "asc".equalsIgnoreCase(order) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(direction, sort));
+        Sort.Direction direction = "asc".equalsIgnoreCase(condition.getOrder())
+                ? Sort.Direction.ASC
+                : Sort.Direction.DESC;
 
-        Page<Order> orders = orderRepository.search(status, keyword, pageable);
+        Pageable pageable = PageRequest.of(
+                condition.getPage() - 1,
+                condition.getSize(),
+                Sort.by(direction, condition.getSort())
+        );
 
+        Page<Order> orders = orderRepository.search(
+                condition.getStatus(),
+                condition.getKeyword(),
+                pageable
+        );
         return new PageResponseDto<>(orders.map(OrderListResponseDto::new));
     }
 
