@@ -36,7 +36,7 @@ public class AdminService {
     public void signup(SignupRequest request) {
         //이메일 중복 여부 확인
         if (adminRepository.existsByEmail(request.getEmail())) {
-            throw new CustomException(ErrorCode.EMAIL_IN_USE);
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다");
         }
         //비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(request.getPassword());
@@ -195,8 +195,12 @@ public class AdminService {
     public AdminResponse changeCurrentAdminPassword(Long curAdminId, AdminChangePasswordRequest changePasswordRequest) {
         Admin found = findById(curAdminId);
 
+        if(!found.verifyPassword(changePasswordRequest.password(), passwordEncoder)) {
+            throw new CustomException(ErrorCode.PASSWORD_INCORRECT);
+        }
+
         //도메인에서 비밀번호 변경
-        found.changePassword(changePasswordRequest.password(),  passwordEncoder);
+        found.changePassword(changePasswordRequest.newPassword(),  passwordEncoder);
         Admin saved = adminRepository.save(found);
 
         return AdminMapper.toAdminResponse(saved);
