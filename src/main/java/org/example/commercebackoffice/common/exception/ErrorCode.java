@@ -10,8 +10,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER NOT FOUND", "사용자를 찾을 수 없습니다."),
     NOT_AUTHOR(HttpStatus.UNAUTHORIZED, "NOT AUTHOR", "작성자가 아닙니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", "접근이 거부되었습니다."),
-    CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "CUSTOMER NOT FOUND", "해당 고객을 찾을 수 없습니다.");
-
+    CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "CUSTOMER NOT FOUND", "해당 고객을 찾을 수 없습니다."),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND,"REVIEW NOT FOUND","리뷰를 찾을 수 없습니다");
     private final HttpStatus httpStatus;
     private final String errorCode;
     private final String message;
