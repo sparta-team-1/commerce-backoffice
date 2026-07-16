@@ -1,14 +1,13 @@
 package org.example.commercebackoffice.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
 import org.example.commercebackoffice.order.domain.Order;
 import org.example.commercebackoffice.order.domain.dto.PageResponseDto;
 import org.example.commercebackoffice.order.repository.OrderRepository;
 import org.example.commercebackoffice.review.domain.Review;
-import org.example.commercebackoffice.review.domain.dto.ReviewCreateRequestDto;
-import org.example.commercebackoffice.review.domain.dto.ReviewListResponseDto;
-import org.example.commercebackoffice.review.domain.dto.ReviewResponseDto;
-import org.example.commercebackoffice.review.domain.dto.ReviewSearchCondition;
+import org.example.commercebackoffice.review.domain.dto.*;
 import org.example.commercebackoffice.review.repository.ReviewRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,5 +41,28 @@ public class ReviewService {
 
         Page<Review> reviews = reviewRepository.search(condition.getRating(), condition.getKeyword(), pageable);
         return new PageResponseDto<>(reviews.map(ReviewListResponseDto::new));
+    }
+    @Transactional(readOnly = true)
+    public ReviewDetailResponseDto getReviewDetail(Long reviewId) {
+        Review review = reviewRepository.findDetailById(reviewId)
+                .orElseThrow(
+                        () -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+
+        //조회한 Review 엔티티를 상세 응답 DTO로 변환하여 Controller에 반환
+        return  new ReviewDetailResponseDto(review);
+    }
+    //리뷰 삭제 기능
+    @Transactional
+    public void deleteReview(Long reviewId) { //Long 은 숫자 객체의 참조값이 전달
+        //reviewId를 이용해 데이터베이스에서 리뷰를 찾는다.
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(
+                        () -> new CustomException(ErrorCode.REVIEW_NOT_FOUND));
+
+
+        //찾은 Review 객체를 리포지토리에 전달해 삭제
+        //트렌잭션이 정상적으로 끝나면
+        //데이터베이스에서 DELETE SQL이 실행된다
+        reviewRepository.delete(review);
     }
 }
