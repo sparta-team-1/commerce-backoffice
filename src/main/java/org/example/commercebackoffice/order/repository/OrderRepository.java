@@ -12,6 +12,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
+    Long countByCustomerId(Long customerId);// 특정 고객의 총 주문 수 계산 (고객 조회 데이터 확장)
+    // 특정 고객의 총 구매 금액 계산 (null 방지,고객 조회 데이터 확장)
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE o.customer.id = :customerId")
+    Long sumTotalPriceByCustomerId(@Param("customerId") Long customerId);
+
     @Query("SELECT o FROM Order o " +
             "WHERE (:status IS NULL OR o.status = :status) " +
             "AND (:keyword IS NULL " +

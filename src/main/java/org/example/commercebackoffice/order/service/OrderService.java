@@ -16,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.example.commercebackoffice.common.exception.CustomException;
+import org.example.commercebackoffice.common.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +31,17 @@ public class OrderService {
     @Transactional
     public OrderResponseDto createOrder(OrderCreateRequestDto requestDto, Long loginAdminId) {
         Customer customer = customerRepository.findById(requestDto.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("고객을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.CUSTOMER_NOT_FOUND));
+
 
         Item item = itemRepository.findById(requestDto.getItemId())
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
         // 수정: 로그인한 관리자 ID가 있을 때만 조회
         Admin admin = null;
         if (loginAdminId != null) {
             admin = adminRepository.findById(loginAdminId)
-                    .orElseThrow(() -> new RuntimeException("관리자를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.ADMIN_NOT_FOUND));
         }
 
         int quantity = requestDto.getQuantity();
@@ -79,7 +82,7 @@ public class OrderService {
     @Transactional
     public OrderDetailResponseDto getOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
         return new OrderDetailResponseDto(order);
     }
 
@@ -87,7 +90,7 @@ public class OrderService {
     @Transactional
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusUpdateRequestDto requestDto) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 
         order.updateStatus(requestDto.getStatus());
 
@@ -98,7 +101,7 @@ public class OrderService {
     @Transactional
     public OrderResponseDto cancelOrder(Long orderId, OrderCancelRequestDto requestDto) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.ORDER_NOT_FOUND));
 
         order.cancel(requestDto.getCancelReason());
 
