@@ -16,6 +16,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -70,5 +73,17 @@ public class ReviewService {
         //트렌잭션이 정상적으로 끝나면
         //데이터베이스에서 DELETE SQL이 실행된다
         reviewRepository.delete(review);
+    }
+
+    //대시보드용 리뷰 정보 조회
+    public ReviewInfoForDashboard getReviewInfoForDashboard() {
+        //리뷰 점수 당 개수 Map으로 반환
+        Map<Integer, Long> reviewRatingCount = reviewRepository.getReviewRatingCount().stream()
+                .collect(Collectors.toMap(ReviewRatingMappingDto::rating, ReviewRatingMappingDto::ratingCount));
+
+        //리뷰 평균 및 전체 개수
+        ReviewTotalAvgAndCount totalAvgAndCount = reviewRepository.getTotalAvgAndCount();
+
+        return ReviewInfoForDashboard.from(totalAvgAndCount, reviewRatingCount);
     }
 }

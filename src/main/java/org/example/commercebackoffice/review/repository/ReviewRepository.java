@@ -1,12 +1,15 @@
 package org.example.commercebackoffice.review.repository;
 
 import org.example.commercebackoffice.review.domain.Review;
+import org.example.commercebackoffice.review.domain.dto.ReviewRatingMappingDto;
+import org.example.commercebackoffice.review.domain.dto.ReviewTotalAvgAndCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
@@ -35,4 +38,20 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     );
 
     boolean existsByOrderId(Long orderId);
+
+    @Query("""
+        SELECT new org.example.commercebackoffice.review.domain.dto.ReviewTotalAvgAndCount(
+            AVG(R.rating),
+            SUM(COUNT(r))
+        )
+        FROM Review r
+    """)
+    ReviewTotalAvgAndCount getTotalAvgAndCount();
+
+    @Query("""
+        SELECT r.rating AS rating, COUNT(r) AS ratingCount
+        FROM Review r
+        GROUP BY r.rating
+    """)
+    List<ReviewRatingMappingDto> getReviewRatingCount();
 }
