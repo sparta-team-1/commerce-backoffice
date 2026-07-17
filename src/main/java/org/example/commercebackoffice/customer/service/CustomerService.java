@@ -98,7 +98,7 @@ public class CustomerService {
         if (customer.getStatus() == CustomerStatus.INACTIVE) {
             throw new CustomException(ErrorCode.CUSTOMER_NOT_FOUND);
         }
-        
+
         Long totalOrderCount = orderRepository.countByCustomerId(customerId); // 고객 조회 데이터 확장
         Long totalPurchaseAmount = orderRepository.sumTotalPriceByCustomerId(customerId); // 고객 조회 데이터 확장
 

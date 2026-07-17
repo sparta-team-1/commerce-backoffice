@@ -1,40 +1,48 @@
 package org.example.commercebackoffice.review.domain.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.example.commercebackoffice.review.domain.Review;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 
+@Schema(description = "리뷰 상세 조회 응답 DTO")
 @Getter
 public class ReviewDetailResponseDto {
-    private final String itemName; //상품이름
 
-    private final String customerName; //리뷰를 작성한 고객 이름
+    @Schema(description = "상품명", example = "무선 마우스")
+    private final String itemName;
 
-    private final String customerEmail;  //리뷰를 작성한 고객 이메일
+    @Schema(description = "리뷰 작성 고객명", example = "홍길동")
+    private final String customerName;
 
-    private final LocalDateTime createdAt; //리뷰 작성일
+    @Schema(description = "리뷰 작성 고객 이메일", example = "hong@example.com")
+    private final String customerEmail;
 
-    private final Integer rating; //리뷰 평점
+    @Schema(description = "리뷰 작성일시", example = "2025-01-15T14:30:00")
+    private final LocalDateTime createdAt;
 
-    private final String content; //리뷰 내용
+    @Schema(description = "평점", example = "5")
+    private final Integer rating;
 
-    //Review 엔티티를 상세 조회 응답 DTO로 바꾸는 생성
-    public  ReviewDetailResponseDto(Review review) {
+    @Schema(description = "리뷰 내용", example = "배송이 빠르고 상품 품질이 매우 만족스럽습니다.")
+    private final String content;
+
+    public ReviewDetailResponseDto(Review review) {
         this.itemName = review.getOrder()
-                                .getItem()
-                                 .getName();
+                .getItem()
+                .getName();
 
         this.customerName = review.getOrder()
-                                    .getCustomer()
-                                    .getName(); //Review ->Order ->Costomer ->고객명
+                .getCustomer()
+                .getName();
 
         this.customerEmail = review.getOrder()
-                                     .getCustomer()
-                                     .getEmail();  // Review → Order → Customer → 고객 이메일
+                .getCustomer()
+                .getEmail();
+
         this.createdAt = review.getCreatedAt();
-        this.rating = review.getRating(); //Review 엔티티의 평점을 가져옴
-        this.content = review.getContent(); //Review 엔티티의 리뷰 내용을 가져옴
+        this.rating = review.getRating();
+        this.content = review.getContent();
     }
 }
