@@ -63,6 +63,29 @@ public class AdminService {
         adminRepository.save(admin);
     }
 
+    //테스트용 super 관리자 계정 추가
+    @Transactional
+    public void superAdminSignup(SignupRequest request) {
+        //이메일 중복 여부 확인
+        if (adminRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("이미 사용 중인 이메일입니다");
+        }
+        //비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        //엔티티 생성
+        //admin.of -> 내부에서 status는 자동으로 PENDING, CREATEDAT은  JPA auditing(@CreatedDate)에 의해 저장 시점에 자동으로 채워진다.
+        Admin admin = Admin.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .phoneNumber(request.getPhoneNumber())
+                .role(AdminRole.SUPER_ADMIN)
+                .status(AdminStatus.ACTIVE)
+                .build();
+
+        adminRepository.save(admin);
+    }
+
     @Transactional(readOnly = true)
     //로그인 로직
     public SessionUser login(LoginRequest loginRequest) {

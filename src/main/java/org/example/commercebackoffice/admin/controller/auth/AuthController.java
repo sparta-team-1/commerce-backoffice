@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor //final이 붙은 서비스 객체를 생성자로 자동으로 주입
 public class AuthController {
     private final AdminService adminService;
+    private final static int SESSION_EXPIRATION = 3600;
 
     @PostMapping("/register")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest request) {
@@ -28,7 +29,13 @@ public class AuthController {
         return  ResponseEntity.ok("회원가입 신청이 완료되었습니다. 승인을 기다려주세요");
     }
 
-    private final static int SESSION_EXPIRATION = 3600;
+    //테스트용 슈퍼 관리자 추가
+    @PostMapping("/register/super")
+    public ResponseEntity<?> superAdminSignup(@Valid @RequestBody SignupRequest request) {
+        adminService.superAdminSignup(request);
+
+        return  ResponseEntity.ok("회원가입 신청이 완료되었습니다. 승인을 기다려주세요");
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest, HttpSession session) {

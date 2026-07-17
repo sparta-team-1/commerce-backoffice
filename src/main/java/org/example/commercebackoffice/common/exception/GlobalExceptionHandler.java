@@ -1,5 +1,6 @@
 package org.example.commercebackoffice.common.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice //모든 컬트롤러에서 발생하는 예외를 감시
+@Slf4j
 public class GlobalExceptionHandler {
 
 
@@ -63,6 +65,7 @@ public class GlobalExceptionHandler {
 }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        log.error(e.getMessage(), e);
         ErrorResponse response = new ErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "서버 내부에 오류가 발생했습니다"
