@@ -20,6 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.example.commercebackoffice.common.exception.CustomException;
 import org.example.commercebackoffice.common.exception.ErrorCode;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -114,5 +119,23 @@ public class OrderService {
 
         return new OrderResponseDto(order);
     }
-    
+
+    //대시보드용 주문 정보 조회
+    @Transactional
+    public OrderInfoForDashboard getOrderInfoForDashboard() {
+        //오늘 날짜
+        LocalDate today = LocalDate.now();
+        OrderSummaryDto summaryDto =
+                //오늘의 시작과 끝을 매개변수로 넣어 주문 통계 조회
+                orderRepository.getOrderSummaryInfo(today.atStartOfDay(), today.atTime(LocalTime.MAX));
+
+        //최근 10개의 주문 조회, Pageable 사용
+        List<OrderDetailResponseDto> recentTenOrders =
+                orderRepository.getRecentTenOrders(PageRequest.of(0, 10))
+                        .stream()
+                        .map(OrderDetailResponseDto::from)
+                        .toList();
+
+        return new OrderInfoForDashboard(summaryDto, recentTenOrders);
+    }
 }

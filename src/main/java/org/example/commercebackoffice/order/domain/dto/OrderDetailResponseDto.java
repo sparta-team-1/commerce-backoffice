@@ -37,4 +37,8 @@ public class OrderDetailResponseDto {
         this.adminEmail = admin != null ? admin.getEmail() : null;
         this.adminRole = admin != null ? admin.getRole().name() : null;
     }
+
+    public static OrderDetailResponseDto from(Order order) {
+        return new OrderDetailResponseDto(order);
+    }
 }
