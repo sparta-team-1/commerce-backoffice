@@ -170,7 +170,7 @@ public class CustomerService {
     }
 
     //전체 고객 수 및 활성화 고객
-    @Transactional
+    @Transactional(readOnly = true)
     public CustomerInfoForDashboard getCustomerInfoForDashboard() {
         return customerRepository.countAllCustomersAndCountCustomerByStatus();
     }

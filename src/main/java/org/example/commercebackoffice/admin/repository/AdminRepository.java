@@ -14,6 +14,7 @@ public interface AdminRepository extends JpaRepository<Admin, Long> {
 
     boolean existsByEmail(String email); //가입할 때 이메일 중복 체크를 위해 사용
     Optional<Admin> findByEmail(String email);
+    //전체 관리자 계정 수 및 활성 관리자 계정 수 조회
     @Query("""
         SELECT new org.example.commercebackoffice.admin.controller.dto.AdminInfoForDashboard(
             COUNT(a),

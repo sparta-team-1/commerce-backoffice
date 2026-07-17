@@ -36,6 +36,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             Pageable pageable
     );
 
+    //전체 고객 수 및 각 상태 별 고객 수 조회
     @Query("""
         SELECT new org.example.commercebackoffice.customer.dto.CustomerInfoForDashboard(
             COUNT(c),

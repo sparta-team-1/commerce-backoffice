@@ -275,6 +275,7 @@ public class AdminService {
     }
 
     //대시보드용 관리자 정보 조회
+    @Transactional(readOnly = true)
     public AdminInfoForDashboard getAdminInfoForDashboard() {
         return adminRepository.countAllAdminsAndCountActiveAdmins();
     }
