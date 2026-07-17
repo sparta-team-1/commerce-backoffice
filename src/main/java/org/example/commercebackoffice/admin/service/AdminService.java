@@ -10,6 +10,7 @@ import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminR
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.LoginRequest;
 import org.example.commercebackoffice.admin.controller.auth.dto.request.SignupRequest;
+import org.example.commercebackoffice.admin.controller.dto.AdminInfoForDashboard;
 import org.example.commercebackoffice.admin.domain.Admin;
 import org.example.commercebackoffice.admin.domain.enums.AdminRole;
 import org.example.commercebackoffice.admin.domain.enums.AdminStatus;
@@ -271,5 +272,10 @@ public class AdminService {
         if(editRequest.phone() != null) {
             admin.changePhone(editRequest.phone());
         }
+    }
+
+    //대시보드용 관리자 정보 조회
+    public AdminInfoForDashboard getAdminInfoForDashboard() {
+        return adminRepository.countAllAdminsAndCountActiveAdmins();
     }
 }
