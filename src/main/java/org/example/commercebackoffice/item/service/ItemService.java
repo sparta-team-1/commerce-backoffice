@@ -3,6 +3,7 @@ package org.example.commercebackoffice.item.service;
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.common.exception.CustomException;
 import org.example.commercebackoffice.common.exception.ErrorCode;
+import org.example.commercebackoffice.item.dto.response.ItemInfoForDashboard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.example.commercebackoffice.admin.domain.Admin;
@@ -82,5 +83,10 @@ public class ItemService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         item.discontinue();
+    }
+
+    // 대시보드용 상품 정보 조회
+    public ItemInfoForDashboard getItemInfoForDashboard(Long itemId) {
+        return itemRepository.getItemInfoForDashboard();
     }
 }
