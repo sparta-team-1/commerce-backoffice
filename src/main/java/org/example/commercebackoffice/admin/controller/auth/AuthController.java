@@ -31,8 +31,8 @@ public class AuthController {
 
     //테스트용 슈퍼 관리자 추가
     @PostMapping("/register/super")
-    public ResponseEntity<?> superAdminRegister(@Valid @RequestBody SignupRequest request) {
-        adminService.signup(request);
+    public ResponseEntity<?> superAdminSignup(@Valid @RequestBody SignupRequest request) {
+        adminService.superAdminSignup(request);
 
         return  ResponseEntity.ok("회원가입 신청이 완료되었습니다. 승인을 기다려주세요");
     }
