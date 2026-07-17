@@ -3,6 +3,8 @@ package org.example.commercebackoffice.order.controller;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.commercebackoffice.common.dto.ApiResponse;
+import org.example.commercebackoffice.common.message.SuccessCode;
 import org.example.commercebackoffice.order.domain.dto.*;
 import org.example.commercebackoffice.order.domain.enums.OrderStatus;
 import org.example.commercebackoffice.order.service.OrderService;
@@ -18,45 +20,64 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderResponseDto> createOrder(
+    public ResponseEntity<ApiResponse<OrderResponseDto>> createOrder(
             @Valid @RequestBody OrderCreateRequestDto requestDto,
             HttpSession session
     ) {
         Long loginAdminId = (Long) session.getAttribute("adminId");
         OrderResponseDto response = orderService.createOrder(requestDto, loginAdminId);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        // SuccessCode.ORDER_CREATE_SUCCESS (HttpStatus.CREATED, "주문이 완료되었습니다.") 사용
+        return ResponseEntity
+                .status(SuccessCode.ORDER_CREATE_SUCCESS.getHttpStatus())
+                .body(ApiResponse.of(SuccessCode.ORDER_CREATE_SUCCESS, response));
     }
 
     @GetMapping
-    public ResponseEntity<PageResponseDto<OrderListResponseDto>> getOrders(
+    public ResponseEntity<ApiResponse<PageResponseDto<OrderListResponseDto>>> getOrders(
             @ModelAttribute OrderSearchCondition condition
     ) {
         PageResponseDto<OrderListResponseDto> response = orderService.getOrders(condition);
-        return ResponseEntity.ok(response);
+
+        // SuccessCode.ORDER_LIST_SELECT_SUCCESS (HttpStatus.OK, "주문 목록 조회에 성공하였습니다.") 사용
+        return ResponseEntity
+                .status(SuccessCode.ORDER_LIST_SELECT_SUCCESS.getHttpStatus())
+                .body(ApiResponse.of(SuccessCode.ORDER_LIST_SELECT_SUCCESS, response));
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderDetailResponseDto> getOrder(@PathVariable Long orderId) {
+    public ResponseEntity<ApiResponse<OrderDetailResponseDto>> getOrder(@PathVariable Long orderId) {
         OrderDetailResponseDto response = orderService.getOrder(orderId);
-        return ResponseEntity.ok(response);
+
+        // SuccessCode.ORDER_DETAIL_SELECT_SUCCESS (HttpStatus.OK, "주문 상세 조회에 성공하였습니다.") 사용
+        return ResponseEntity
+                .status(SuccessCode.ORDER_DETAIL_SELECT_SUCCESS.getHttpStatus())
+                .body(ApiResponse.of(SuccessCode.ORDER_DETAIL_SELECT_SUCCESS, response));
     }
 
     @PatchMapping("/{orderId}/status")
-    public ResponseEntity<OrderResponseDto> updateOrderStatus(
+    public ResponseEntity<ApiResponse<OrderResponseDto>> updateOrderStatus(
             @PathVariable Long orderId,
             @Valid @RequestBody OrderStatusUpdateRequestDto requestDto
     ) {
         OrderResponseDto response = orderService.updateOrderStatus(orderId, requestDto);
-        return ResponseEntity.ok(response);
+
+        // SuccessCode.ORDER_STATUS_UPDATE_SUCCESS (HttpStatus.OK, "주문 상태가 성공적으로 수정되었습니다.") 사용
+        return ResponseEntity
+                .status(SuccessCode.ORDER_STATUS_UPDATE_SUCCESS.getHttpStatus())
+                .body(ApiResponse.of(SuccessCode.ORDER_STATUS_UPDATE_SUCCESS, response));
     }
 
     @PatchMapping("/{orderId}/cancel")
-    public ResponseEntity<OrderResponseDto> cancelOrder(
+    public ResponseEntity<ApiResponse<OrderResponseDto>> cancelOrder(
             @PathVariable Long orderId,
             @Valid @RequestBody OrderCancelRequestDto requestDto
     ) {
         OrderResponseDto response = orderService.cancelOrder(orderId, requestDto);
-        return ResponseEntity.ok(response);
+
+        // SuccessCode.ORDER_CANCEL_SUCCESS (HttpStatus.OK, "주문이 취소되었습니다.") 사용
+        return ResponseEntity
+                .status(SuccessCode.ORDER_CANCEL_SUCCESS.getHttpStatus())
+                .body(ApiResponse.of(SuccessCode.ORDER_CANCEL_SUCCESS, response));
     }
 }
