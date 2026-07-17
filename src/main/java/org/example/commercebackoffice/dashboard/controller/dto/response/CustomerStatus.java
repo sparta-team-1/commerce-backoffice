@@ -1,7 +1,7 @@
 package org.example.commercebackoffice.dashboard.controller.dto.response;
 
 public record CustomerStatus(
-        CustomerStatus status,
+        org.example.commercebackoffice.customer.domain.enums.CustomerStatus status,
         Long count
 ) {
 }
