@@ -86,6 +86,8 @@ public class ReviewService {
         ReviewTotalAvgAndCount totalAvgAndCount = reviewRepository.getTotalAvgAndCount();
 
         return ReviewInfoForDashboard.from(totalAvgAndCount, reviewRatingCount);
+    }
+    
     @Transactional(readOnly = true)
     public ReviewStatsDto getReviewStats(Long itemId) {
         List<Review> reviews = reviewRepository.findAllByItemId(itemId);

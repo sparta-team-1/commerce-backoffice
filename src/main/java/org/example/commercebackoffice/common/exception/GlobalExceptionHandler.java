@@ -49,20 +49,20 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-@ExceptionHandler(CustomException.class)
+    @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(
             CustomException e
-) {
+    ) {
         ErrorCode errorCode = e.getErrorCode();
 
         ErrorResponse response = new ErrorResponse(
                 errorCode.getHttpStatus().value(),
                 e.getMessage()
         );
-        return  ResponseEntity
+        return ResponseEntity
                 .status(errorCode.getHttpStatus())
                 .body(response);
-}
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error(e.getMessage(), e);
