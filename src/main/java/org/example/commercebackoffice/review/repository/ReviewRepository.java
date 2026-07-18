@@ -54,4 +54,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
         GROUP BY r.rating
     """)
     List<ReviewRatingMappingDto> getReviewRatingCount();
+    List<Review> findTop3ByOrder_ItemIdOrderByCreatedAtDesc(Long itemId);
+
+    @Query("SELECT r FROM Review r WHERE r.order.item.id = :itemId")
+    List<Review> findAllByItemId(@Param("itemId") Long itemId);
 }

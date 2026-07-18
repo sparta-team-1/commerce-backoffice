@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -85,5 +86,28 @@ public class ReviewService {
         ReviewTotalAvgAndCount totalAvgAndCount = reviewRepository.getTotalAvgAndCount();
 
         return ReviewInfoForDashboard.from(totalAvgAndCount, reviewRatingCount);
+    @Transactional(readOnly = true)
+    public ReviewStatsDto getReviewStats(Long itemId) {
+        List<Review> reviews = reviewRepository.findAllByItemId(itemId);
+
+        long totalCount = reviews.size();
+        double average = reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+        double roundedAverage = Math.round(average * 10) / 10.0;
+
+        Map<Integer, Long> ratingCountMap = reviews.stream()
+                .collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
+
+        return new ReviewStatsDto(roundedAverage, totalCount, ratingCountMap);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ReviewSummaryDto> getLatestReviews(Long itemId) {
+        return reviewRepository.findTop3ByOrder_ItemIdOrderByCreatedAtDesc(itemId)
+                .stream()
+                .map(ReviewSummaryDto::new)
+                .toList();
     }
 }
