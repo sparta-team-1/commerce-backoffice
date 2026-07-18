@@ -42,7 +42,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             COUNT(c),
             COUNT(CASE WHEN c.status = 'ACTIVE' THEN 1 END),
             COUNT(CASE WHEN c.status = 'INACTIVE' THEN 1 END),
-            COUNT(CASE WHEN c.status = 'SUSPEND' THEN 1 END)
+            COUNT(CASE WHEN c.status = 'SUSPENDED' THEN 1 END)
         )
         FROM Customer c
     """)

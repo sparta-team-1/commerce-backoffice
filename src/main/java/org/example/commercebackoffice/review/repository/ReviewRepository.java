@@ -41,15 +41,15 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("""
         SELECT new org.example.commercebackoffice.review.domain.dto.ReviewTotalAvgAndCount(
-            AVG(R.rating),
-            SUM(COUNT(r))
+            AVG(r.rating),
+            COUNT(r)
         )
         FROM Review r
     """)
     ReviewTotalAvgAndCount getTotalAvgAndCount();
 
     @Query("""
-        SELECT r.rating AS rating, COUNT(r) AS ratingCount
+        SELECT new org.example.commercebackoffice.review.domain.dto.ReviewRatingMappingDto(r.rating, COUNT(r.id))
         FROM Review r
         GROUP BY r.rating
     """)
