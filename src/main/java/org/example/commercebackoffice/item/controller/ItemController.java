@@ -3,15 +3,16 @@ package org.example.commercebackoffice.item.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.commercebackoffice.common.dto.ApiResponse;
-import org.example.commercebackoffice.common.message.SuccessCode;
+import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminResponse;
 import org.example.commercebackoffice.common.exception.ErrorResponse;
+import org.example.commercebackoffice.common.message.SuccessCode;
 import org.example.commercebackoffice.item.domain.enums.ItemStatus;
 import org.example.commercebackoffice.item.dto.request.ItemCreateRequestDto;
 import org.example.commercebackoffice.item.dto.request.ItemStatusUpdateRequestDto;
@@ -41,11 +42,23 @@ public class ItemController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "상품 등록 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "INVALID_STOCK_QUANTITY",
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "message": "INVALID RESTORATION QUANTITY",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PostMapping
-    public ResponseEntity<ApiResponse<ItemResponseDto>> createItem(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<ItemResponseDto>> createItem(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "상품 등록 요청",
                     required = true
@@ -53,7 +66,9 @@ public class ItemController {
             @Valid @RequestBody ItemCreateRequestDto requestDto) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(itemService.createItem(requestDto));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse.
+                        of(SuccessCode.ITEM_CREATE_SUCCESS, itemService.createItem(requestDto))
+                );
     }
 
     @Operation(
@@ -63,15 +78,30 @@ public class ItemController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 조회 성공"),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ITEM_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ITEM NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @GetMapping("/{itemId}")
-    public ResponseEntity<ApiResponse<ItemResponseDto>> getItem(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<ItemResponseDto>> getItem(
             @Parameter(description = "상품 ID", example = "1", required = true)
             @PathVariable Long itemId) {
 
-        return ResponseEntity.ok(itemService.getItem(itemId));
+        return ResponseEntity.ok(org.example.commercebackoffice.common.dto.ApiResponse.of(
+                SuccessCode.ITEM_DETAIL_SELECT_SUCCESS,
+                itemService.getItem(itemId)
+        ));
     }
 
     @Operation(
@@ -82,7 +112,7 @@ public class ItemController {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공")
     })
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ItemResponseDto>>> getAllItems(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Page<ItemResponseDto>>> getAllItems(
             @Parameter(description = "검색 키워드", example = "마우스")
             @RequestParam(required = false) String keyword,
 
@@ -99,7 +129,8 @@ public class ItemController {
 
         return ResponseEntity
                 .status(SuccessCode.ITEM_PAGING_SELECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ITEM_PAGING_SELECT_SUCCESS, response));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ITEM_PAGING_SELECT_SUCCESS, response));
     }
 
     @Operation(
@@ -109,11 +140,23 @@ public class ItemController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 수정 성공"),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ITEM_NOT_FOUND_OR_UNMODIFIABLE",
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "message": "ITEM_NOT_FOUND_OR_UNMODIFIABLE",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PutMapping("/{itemId}")
-    public ResponseEntity<ApiResponse<ItemResponseDto>> updateItem(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<ItemResponseDto>> updateItem(
             @Parameter(description = "상품 ID", example = "1", required = true)
             @PathVariable Long itemId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -123,10 +166,10 @@ public class ItemController {
             @Valid @RequestBody ItemUpdateRequestDto requestDto) {
         ItemResponseDto response = itemService.updateItem(itemId, requestDto);
 
-        // SuccessCode.ITEM_INFO_UPDATE_SUCCESS 사용 (200 OK)
         return ResponseEntity
                 .status(SuccessCode.ITEM_INFO_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ITEM_INFO_UPDATE_SUCCESS, response));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ITEM_INFO_UPDATE_SUCCESS, response));
     }
 
     @Operation(
@@ -136,11 +179,23 @@ public class ItemController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 상태 변경 성공"),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ITEM_NOT_ON_SALE",
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "message": "ITEM NOT ON SALE",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{itemId}/status")
-    public ResponseEntity<ApiResponse<ItemResponseDto>> updateItemStatus(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<ItemResponseDto>> updateItemStatus(
             @Parameter(description = "상품 ID", example = "1", required = true)
             @PathVariable Long itemId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -150,10 +205,10 @@ public class ItemController {
             @Valid @RequestBody ItemStatusUpdateRequestDto requestDto) {
         ItemResponseDto response = itemService.updateItemStatus(itemId, requestDto);
 
-        // SuccessCode.ITEM_INFO_UPDATE_SUCCESS 사용 (200 OK)
         return ResponseEntity
                 .status(SuccessCode.ITEM_INFO_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ITEM_INFO_UPDATE_SUCCESS, response));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ITEM_INFO_UPDATE_SUCCESS, response));
     }
 
     @Operation(
@@ -163,11 +218,23 @@ public class ItemController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "상품 재고 변경 성공"),
             @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ITEM_STOCK_NOT_ENOUGH",
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "message": "ITEM STOCK NOT ENOUGH",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{itemId}/stock")
-    public ResponseEntity<ApiResponse<ItemResponseDto>> updateItemStock(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<ItemResponseDto>> updateItemStock(
             @Parameter(description = "상품 ID", example = "1", required = true)
             @PathVariable Long itemId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -179,28 +246,53 @@ public class ItemController {
 
         return ResponseEntity
                 .status(SuccessCode.ITEM_STOCK_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ITEM_STOCK_UPDATE_SUCCESS, response));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ITEM_STOCK_UPDATE_SUCCESS, response));
     }
 
-    @Operation(
-            summary = "상품 삭제",
-            description = "상품을 삭제(Soft Delete)합니다."
-    )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "상품 삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "상품 삭제 성공",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": true,
+                                  "message": "상품 삭제 성공",
+                                  "data": null
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "상품을 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ITEM_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ITEM NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @DeleteMapping("/{itemId}")
-    public ResponseEntity<ApiResponse<Void>> deleteItem(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Void>> deleteItem(
             @Parameter(description = "상품 ID", example = "1", required = true)
             @PathVariable Long itemId) {
-
         itemService.deleteItem(itemId);
 
         return ResponseEntity
                 .status(SuccessCode.ITEM_DELETE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ITEM_DELETE_SUCCESS, null));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ITEM_DELETE_SUCCESS, null));
     }
 }

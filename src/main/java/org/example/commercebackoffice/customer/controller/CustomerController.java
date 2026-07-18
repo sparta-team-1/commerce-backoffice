@@ -3,22 +3,22 @@ package org.example.commercebackoffice.customer.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.commercebackoffice.common.dto.ApiResponse;
-import org.example.commercebackoffice.common.message.SuccessCode;
 import org.example.commercebackoffice.common.exception.ErrorResponse;
+import org.example.commercebackoffice.common.message.SuccessCode;
 import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
 import org.example.commercebackoffice.customer.dto.*;
 import org.example.commercebackoffice.customer.service.CustomerService;
+import org.example.commercebackoffice.item.dto.response.ItemResponseDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +37,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "200", description = "고객 목록 조회 성공")
     })
     @GetMapping("/api/customers")
-    public ResponseEntity<?> getAll(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Page<GetCustomerListResponse>>> getAll(
 
             @Parameter(description = "검색 키워드(이름, 이메일, 전화번호)", example = "홍길동")
             @RequestParam(required = false) String keyword,
@@ -68,7 +68,8 @@ public class CustomerController {
 
         return ResponseEntity
                 .status(SuccessCode.CUSTOMER_LIST_SELECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.CUSTOMER_LIST_SELECT_SUCCESS, result));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.CUSTOMER_LIST_SELECT_SUCCESS, result));
     }
 
     @Operation(
@@ -78,11 +79,23 @@ public class CustomerController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "고객 조회 성공"),
             @ApiResponse(responseCode = "404", description = "고객을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "CUSTOMER_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "CUSTOMER NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @GetMapping("/api/customers/{customerId}")
-    public ResponseEntity<ApiResponse<GetCustomerDetailResponse>> getOne(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<GetCustomerDetailResponse>> getOne(
             @Parameter(description = "고객 ID", example = "1", required = true)
             @PathVariable Long customerId) {
 
@@ -90,7 +103,8 @@ public class CustomerController {
 
         return ResponseEntity
                 .status(SuccessCode.CUSTOMER_DETAIL_SELECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.CUSTOMER_DETAIL_SELECT_SUCCESS, result));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.CUSTOMER_DETAIL_SELECT_SUCCESS, result));
     }
 
     @Operation(
@@ -100,11 +114,23 @@ public class CustomerController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "고객 정보 수정 성공"),
             @ApiResponse(responseCode = "404", description = "고객을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "CUSTOMER_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "CUSTOMER NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PutMapping("/api/customers/{customerId}")
-    public ResponseEntity<ApiResponse<PutCustomerResponse>> updateCustomer(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<PutCustomerResponse>> updateCustomer(
             @Parameter(description = "고객 ID", example = "1", required = true)
             @PathVariable Long customerId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -117,7 +143,8 @@ public class CustomerController {
 
         return ResponseEntity
                 .status(SuccessCode.CUSTOMER_INFO_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.CUSTOMER_INFO_UPDATE_SUCCESS, result));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.CUSTOMER_INFO_UPDATE_SUCCESS, result));
     }
 
     @Operation(
@@ -127,11 +154,23 @@ public class CustomerController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "고객 상태 변경 성공"),
             @ApiResponse(responseCode = "404", description = "고객을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "CUSTOMER_ALREADY_DELETED",
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "message": "CUSTOMER ALREADY DELETED",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/api/customers/{customerId}")
-    public ResponseEntity<ApiResponse<PatchCustomerResponse>> updateStatus(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<PatchCustomerResponse>> updateStatus(
             @Parameter(description = "고객 ID", example = "1", required = true)
             @PathVariable Long customerId,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -144,21 +183,46 @@ public class CustomerController {
 
         return ResponseEntity
                 .status(SuccessCode.CUSTOMER_STATUS_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.CUSTOMER_STATUS_UPDATE_SUCCESS, result));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.CUSTOMER_STATUS_UPDATE_SUCCESS, result));
     }
 
-    @Operation(
-            summary = "고객 삭제",
-            description = "고객 정보를 삭제합니다."
-    )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "고객 삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "고객을 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "고객 삭제 성공",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": true,
+                                  "message": "고객 삭제 성공",
+                                  "data": null
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "고객을 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "CUSTOMER_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "CUSTOMER NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @DeleteMapping("/api/customers/{customerId}")
-    public ResponseEntity<ApiResponse<Void>> delete(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Void>> delete(
             @Parameter(description = "고객 ID", example = "1", required = true)
             @PathVariable Long customerId) {
 
@@ -166,6 +230,7 @@ public class CustomerController {
 
         return ResponseEntity
                 .status(SuccessCode.CUSTOMER_DELETE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.CUSTOMER_DELETE_SUCCESS, null));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.CUSTOMER_DELETE_SUCCESS, null));
     }
 }

@@ -3,10 +3,11 @@ package org.example.commercebackoffice.admin.controller.admin;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,8 @@ import org.example.commercebackoffice.admin.controller.admin.dto.response.AdminR
 import org.example.commercebackoffice.admin.controller.auth.SessionUser;
 import org.example.commercebackoffice.admin.service.AdminSearchCondition;
 import org.example.commercebackoffice.admin.service.AdminService;
-import org.example.commercebackoffice.common.dto.ApiResponse;
-import org.example.commercebackoffice.common.message.SuccessCode;
 import org.example.commercebackoffice.common.exception.ErrorResponse;
-import org.springframework.data.web.PageableDefault;
+import org.example.commercebackoffice.common.message.SuccessCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,14 +38,38 @@ public class AdminController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "관리자 정보 수정 성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "USER_IS_NOT_SUPER_ADMIN",
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "message": "USER IS NOT SUPER ADMIN",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             ),
             @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editAdmin(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminResponse>> editAdmin(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -61,7 +84,8 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_INFO_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_INFO_UPDATE_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_INFO_UPDATE_SUCCESS, resBody));
     }
 
     @Operation(
@@ -71,14 +95,38 @@ public class AdminController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "관리자 역할 변경 성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "USER_IS_NOT_SUPER_ADMIN",
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "message": "USER IS NOT SUPER ADMIN",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             ),
             @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{id}/role")
-    public ResponseEntity<?> changeAdminRole(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminResponse>> changeAdminRole(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -93,7 +141,8 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_ROLE_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_ROLE_UPDATE_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_ROLE_UPDATE_SUCCESS, resBody));
     }
 
     @Operation(
@@ -103,14 +152,38 @@ public class AdminController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "관리자 상태 변경 성공"),
             @ApiResponse(responseCode = "403", description = "권한 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "USER_IS_NOT_SUPER_ADMIN",
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "message": "USER IS NOT SUPER ADMIN",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             ),
             @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{id}/status")
-    public ResponseEntity<?> changeAdminStatus(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminResponse>> changeAdminStatus(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -125,24 +198,63 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_STATUS_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_STATUS_UPDATE_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_STATUS_UPDATE_SUCCESS, resBody));
     }
 
-    @Operation(
-            summary = "관리자 계정 삭제",
-            description = "관리자 계정을 삭제합니다. SUPER 관리자만 가능합니다."
-    )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "관리자 삭제 성공"),
-            @ApiResponse(responseCode = "403", description = "권한 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "관리자 삭제 성공",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": true,
+                                  "message": "관리자 계정이 삭제되었습니다.",
+                                  "data": null
+                                }
+                                """
+                            )
+                    )
             ),
-            @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "USER_IS_NOT_SUPER_ADMIN",
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "message": "USER IS NOT SUPER ADMIN",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "관리자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAdmin(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Void>> deleteAdmin(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id,
             @SessionAttribute SessionUser userInfo) {
@@ -153,24 +265,63 @@ public class AdminController {
         // 기존 noContent() 대신 공통 규격 바디 반환을 위해 200 OK와 null 객체 포장
         return ResponseEntity
                 .status(SuccessCode.ADMIN_DELETE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_DELETE_SUCCESS, null));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_DELETE_SUCCESS, null));
     }
 
-    @Operation(
-            summary = "관리자 계정 승인",
-            description = "대기 중인 관리자 계정을 승인합니다."
-    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "관리자 승인 성공"),
-            @ApiResponse(responseCode = "403", description = "권한 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "관리자 승인 성공",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": true,
+                                  "message": "관리자 계정이 승인되었습니다.",
+                                  "data": null
+                                }
+                                """
+                            )
+                    )
             ),
-            @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "USER_IS_NOT_SUPER_ADMIN",
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "message": "USER IS NOT SUPER ADMIN",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "관리자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{id}/approve")
-    public ResponseEntity<?> approveAdmin(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Void>> approveAdmin(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id,
             @SessionAttribute SessionUser userInfo) {
@@ -180,24 +331,63 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_APPROVE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_APPROVE_SUCCESS, null));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_APPROVE_SUCCESS, null));
     }
 
-    @Operation(
-            summary = "관리자 계정 거부",
-            description = "대기 중인 관리자 계정을 거부합니다."
-    )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "관리자 거부 성공"),
-            @ApiResponse(responseCode = "403", description = "권한 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "관리자 거부 성공",
+                    content = @Content(
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "success": true,
+                                  "message": "관리자 계정이 거부되었습니다.",
+                                  "data": null
+                                }
+                                """
+                            )
+                    )
             ),
-            @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "권한 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "USER_IS_NOT_SUPER_ADMIN",
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "message": "USER IS NOT SUPER ADMIN",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "관리자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @PatchMapping("/{id}/reject")
-    public ResponseEntity<?> rejectAdmin(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<Void>> rejectAdmin(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id,
             @SessionAttribute SessionUser userInfo,
@@ -212,7 +402,8 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_REJECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_REJECT_SUCCESS, null));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_REJECT_SUCCESS, null));
     }
 
     @Operation(
@@ -223,14 +414,16 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUser(@SessionAttribute SessionUser userInfo) {
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminResponse>>
+    getCurrentUser(@SessionAttribute SessionUser userInfo) {
 
         Long curAdminId = userInfo.id();
         AdminResponse resBody = adminService.me(curAdminId);
 
         return ResponseEntity
                 .status(SuccessCode.MY_PROFILE_SELECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.MY_PROFILE_SELECT_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.MY_PROFILE_SELECT_SUCCESS, resBody));
     }
 
     @Operation(
@@ -242,7 +435,7 @@ public class AdminController {
     })
     //현재 사용자 계정 정보 수정 엔드포인트
     @PatchMapping("/me")
-    public ResponseEntity<?> editCurrentUser(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminResponse>> editCurrentUser(
             @SessionAttribute SessionUser userInfo,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "내 관리자 계정 정보 수정 요청",
@@ -254,7 +447,8 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.MY_PROFILE_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.MY_PROFILE_UPDATE_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.MY_PROFILE_UPDATE_SUCCESS, resBody));
     }
 
     @Operation(
@@ -265,7 +459,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공")
     })
     @PatchMapping("/me/password")
-    public ResponseEntity<?> changeCurrentUserPassword(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminResponse>> changeCurrentUserPassword(
             @SessionAttribute SessionUser userInfo,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "내 관리자 계정 비밀번호 수정 요청",
@@ -278,7 +472,8 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.PASSWORD_UPDATE_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.PASSWORD_UPDATE_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.PASSWORD_UPDATE_SUCCESS, resBody));
     }
 
     @Operation(
@@ -289,7 +484,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping
-    public ResponseEntity<?> getAdminsWithCondition(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminPageResponse>> getAdminsWithCondition(
 
             @Parameter(description = "관리자 역할", example = "SUPER")
             @Nullable @RequestParam String role,
@@ -319,7 +514,8 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_LIST_SELECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_LIST_SELECT_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_LIST_SELECT_SUCCESS, resBody));
     }
 
     @Operation(
@@ -329,11 +525,23 @@ public class AdminController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "관리자를 찾을 수 없음",
-                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "ADMIN_NOT_FOUND",
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "message": "ADMIN NOT FOUND",
+                                              "time": "2026-07-18T00:00:00.00000"
+                                            }
+                                            """
+                            )
+                    )
             )
     })
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAdminById(
+    public ResponseEntity<org.example.commercebackoffice.common.dto.ApiResponse<AdminDetailResponse>> getAdminById(
             @Parameter(description = "관리자 ID", example = "1", required = true)
             @PathVariable Long id) {
 
@@ -341,6 +549,7 @@ public class AdminController {
 
         return ResponseEntity
                 .status(SuccessCode.ADMIN_DETAIL_SELECT_SUCCESS.getHttpStatus())
-                .body(ApiResponse.of(SuccessCode.ADMIN_DETAIL_SELECT_SUCCESS, resBody));
+                .body(org.example.commercebackoffice.common.dto.ApiResponse
+                        .of(SuccessCode.ADMIN_DETAIL_SELECT_SUCCESS, resBody));
     }
 }
