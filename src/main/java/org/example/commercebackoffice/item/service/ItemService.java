@@ -3,6 +3,9 @@ package org.example.commercebackoffice.item.service;
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.common.exception.CustomException;
 import org.example.commercebackoffice.common.exception.ErrorCode;
+import org.example.commercebackoffice.item.dto.response.CategoryMapping;
+import org.example.commercebackoffice.item.dto.response.ItemCountInfo;
+import org.example.commercebackoffice.item.dto.response.ItemInfoForDashboard;
 import org.example.commercebackoffice.review.domain.dto.ReviewStatsDto;
 import org.example.commercebackoffice.review.domain.dto.ReviewSummaryDto;
 import org.example.commercebackoffice.review.service.ReviewService;
@@ -21,7 +24,8 @@ import org.example.commercebackoffice.item.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -94,4 +98,16 @@ public class ItemService {
         item.discontinue();
     }
 
+    // 대시보드용 상품 정보 조회
+    @Transactional(readOnly = true)
+    public ItemInfoForDashboard getItemInfoForDashboard() {
+        //카테고리 별로 조회해서 매핑용 DTO로 전달 후 Map으로 변환
+        Map<String, Long> categoryMap = itemRepository.getCategoryCounts().stream()
+                .collect(Collectors.toMap(CategoryMapping::category, CategoryMapping::categoryCount));
+
+        //상품 정보 조회로 개수 세서 DTO로 변환
+        ItemCountInfo countInfo = itemRepository.getItemInfoCount();
+
+        return ItemInfoForDashboard.from(countInfo, categoryMap);
+    }
 }

@@ -1,6 +1,8 @@
 package org.example.commercebackoffice.review.repository;
 
 import org.example.commercebackoffice.review.domain.Review;
+import org.example.commercebackoffice.review.domain.dto.ReviewRatingMappingDto;
+import org.example.commercebackoffice.review.domain.dto.ReviewTotalAvgAndCount;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -37,6 +39,21 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     boolean existsByOrderId(Long orderId);
 
+    @Query("""
+        SELECT new org.example.commercebackoffice.review.domain.dto.ReviewTotalAvgAndCount(
+            AVG(r.rating),
+            COUNT(r)
+        )
+        FROM Review r
+    """)
+    ReviewTotalAvgAndCount getTotalAvgAndCount();
+
+    @Query("""
+        SELECT new org.example.commercebackoffice.review.domain.dto.ReviewRatingMappingDto(r.rating, COUNT(r.id))
+        FROM Review r
+        GROUP BY r.rating
+    """)
+    List<ReviewRatingMappingDto> getReviewRatingCount();
     List<Review> findTop3ByOrder_ItemIdOrderByCreatedAtDesc(Long itemId);
 
     @Query("SELECT r FROM Review r WHERE r.order.item.id = :itemId")

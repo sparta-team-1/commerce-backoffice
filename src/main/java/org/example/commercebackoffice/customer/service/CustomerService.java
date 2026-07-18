@@ -168,4 +168,10 @@ public class CustomerService {
         // 3. 상태값을 INACTIVE로 변경하여 Soft Delete 수행
         customer.changeStatus(CustomerStatus.INACTIVE);
     }
+
+    //전체 고객 수 및 활성화 고객
+    @Transactional(readOnly = true)
+    public CustomerInfoForDashboard getCustomerInfoForDashboard() {
+        return customerRepository.countAllCustomersAndCountCustomerByStatus();
+    }
 }

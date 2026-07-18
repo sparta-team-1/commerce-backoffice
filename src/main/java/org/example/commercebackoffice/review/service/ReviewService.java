@@ -76,6 +76,16 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    //대시보드용 리뷰 정보 조회
+    public ReviewInfoForDashboard getReviewInfoForDashboard() {
+        //리뷰 점수 당 개수 Map으로 반환
+        Map<Integer, Long> reviewRatingCount = reviewRepository.getReviewRatingCount().stream()
+                .collect(Collectors.toMap(ReviewRatingMappingDto::rating, ReviewRatingMappingDto::ratingCount));
+
+        //리뷰 평균 및 전체 개수
+        ReviewTotalAvgAndCount totalAvgAndCount = reviewRepository.getTotalAvgAndCount();
+
+        return ReviewInfoForDashboard.from(totalAvgAndCount, reviewRatingCount);
     @Transactional(readOnly = true)
     public ReviewStatsDto getReviewStats(Long itemId) {
         List<Review> reviews = reviewRepository.findAllByItemId(itemId);
