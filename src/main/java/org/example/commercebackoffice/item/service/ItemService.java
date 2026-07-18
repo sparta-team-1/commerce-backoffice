@@ -3,6 +3,9 @@ package org.example.commercebackoffice.item.service;
 import lombok.RequiredArgsConstructor;
 import org.example.commercebackoffice.common.exception.CustomException;
 import org.example.commercebackoffice.common.exception.ErrorCode;
+import org.example.commercebackoffice.review.domain.dto.ReviewStatsDto;
+import org.example.commercebackoffice.review.domain.dto.ReviewSummaryDto;
+import org.example.commercebackoffice.review.service.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.example.commercebackoffice.admin.domain.Admin;
@@ -18,12 +21,15 @@ import org.example.commercebackoffice.item.repository.ItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ItemService {
 
     private final ItemRepository itemRepository;
     private final AdminRepository adminRepository;
+    private final ReviewService reviewService;
 
     @Transactional
     public ItemResponseDto createItem(ItemCreateRequestDto requestDto) {
@@ -34,12 +40,16 @@ public class ItemService {
                 requestDto.getPrice(), requestDto.getStock(), requestDto.getStatus());
         return new ItemResponseDto(itemRepository.save(item));
     }
-
+    
     @Transactional(readOnly = true)
     public ItemResponseDto getItem(Long itemId) {
         Item item = itemRepository.findByIdAndStatusNot(itemId, ItemStatus.DISCONTINUED)
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
-        return new ItemResponseDto(item);
+
+        ReviewStatsDto reviewStats = reviewService.getReviewStats(itemId);
+        List<ReviewSummaryDto> latestReviews = reviewService.getLatestReviews(itemId);
+
+        return new ItemResponseDto(item, reviewStats, latestReviews);
     }
 
     @Transactional(readOnly = true)
@@ -83,4 +93,5 @@ public class ItemService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
         item.discontinue();
     }
+
 }
