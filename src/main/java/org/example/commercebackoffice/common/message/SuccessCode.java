@@ -54,7 +54,10 @@ public enum SuccessCode {
         ITEM_DETAIL_SELECT_SUCCESS(HttpStatus.OK, "상품 단건(상세) 조회에 성공하였습니다."),
         ITEM_INFO_UPDATE_SUCCESS(HttpStatus.OK, "상품 정보가 성공적으로 수정되었습니다."),
         ITEM_STOCK_UPDATE_SUCCESS(HttpStatus.OK, "상품 재고 변경 및 상태 전환이 완료되었습니다."),
-        ITEM_DELETE_SUCCESS(HttpStatus.OK, "상품이 삭제되었습니다.");
+        ITEM_DELETE_SUCCESS(HttpStatus.OK, "상품이 삭제되었습니다."),
+
+        //6. 대시보 API
+        DASHBOARD_SELECT_SUCCESS(HttpStatus.OK, "대시보드 정보 조회에 성공했습니다.");
 
         private final HttpStatus httpStatus;
         private final String message;
