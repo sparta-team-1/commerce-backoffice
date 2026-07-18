@@ -2,9 +2,12 @@ package org.example.commercebackoffice.customer.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.commercebackoffice.common.entity.BaseEntity;
 import org.example.commercebackoffice.customer.domain.enums.CustomerStatus;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +15,8 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "customer")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Customer {
+@AllArgsConstructor
+public class Customer extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,15 +35,18 @@ public class Customer {
     @Column(nullable = false)
     private CustomerStatus status;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     public Customer(String name, String email, String phone) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.status = CustomerStatus.ACTIVE;
-        this.createdAt = LocalDateTime.now();
+    }
+
+    public Customer(String name, String email, String phone, CustomerStatus status) {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+        this.status = status;
     }
 
     public void updateCustomer(String name, String email, String phone) {
